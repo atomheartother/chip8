@@ -2,7 +2,15 @@
 #include <SFML/Graphics.hpp>
 
 int main() {
-    sf::RenderWindow sfmlWin(sf::VideoMode(600, 360), "Hello World SFML Window");
+    sf::RenderWindow sfmlWin(sf::VideoMode(64, 32), "Hello World SFML Window");
+    sf::Image image;
+    image.create(64, 32, sf::Color(255,0,0));
+    sf::Texture texture;
+    texture.loadFromImage(image);
+
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+
     while (sfmlWin.isOpen()) {
 
         sf::Event e;
@@ -16,6 +24,7 @@ int main() {
         }
 
         sfmlWin.clear();
+        sfmlWin.draw(sprite);
         sfmlWin.display();
     }
     return 0;
