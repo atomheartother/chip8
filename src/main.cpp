@@ -17,6 +17,9 @@ int main() {
                 break;
             }
         }
+        display.SetPixel(8, 8);
+        display.SetPixel(22, 22);
+        display.Draw();
     }
     return 0;
 }
