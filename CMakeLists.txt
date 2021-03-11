@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 add_executable(chip8)
 target_sources(chip8
     PRIVATE ./src/main.cpp
+    PRIVATE ./src/Display/Display.cpp
 )
 
 add_subdirectory(./lib/SFML)

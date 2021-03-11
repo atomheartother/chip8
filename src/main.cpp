@@ -1,31 +1,22 @@
 #include <cassert>
 #include <SFML/Graphics.hpp>
+#include "Display/Display.hh"
 
 int main() {
-    sf::RenderWindow sfmlWin(sf::VideoMode(64, 32), "Hello World SFML Window");
-    sf::Image image;
-    image.create(64, 32, sf::Color(255,0,0));
-    sf::Texture texture;
-    texture.loadFromImage(image);
+    const auto dm = sf::VideoMode::getDesktopMode();
+    Display display(dm.width, dm.height);
 
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
-
-    while (sfmlWin.isOpen()) {
+    while (display.isOpen()) {
 
         sf::Event e;
-        while (sfmlWin.pollEvent(e)) {
+        while (display.Poll(e)) {
 
             switch (e.type) {
             case sf::Event::EventType::Closed:
-                sfmlWin.close();
+                display.Close();
                 break;
             }
         }
-
-        sfmlWin.clear();
-        sfmlWin.draw(sprite);
-        sfmlWin.display();
     }
     return 0;
 }
