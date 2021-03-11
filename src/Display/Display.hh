@@ -2,9 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 
-const unsigned CHIP8_SCREEN_WIDTH = 64;
-const unsigned CHIP8_SCREEN_HEIGHT = 32;
-
 class Display {
 public:
     Display(unsigned width, unsigned height);

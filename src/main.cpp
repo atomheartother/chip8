@@ -3,8 +3,7 @@
 #include "Display/Display.hh"
 
 int main() {
-    const auto dm = sf::VideoMode::getDesktopMode();
-    Display display(dm.width, dm.height);
+    Display display(64, 32);
 
     while (display.isOpen()) {
 

@@ -1,13 +1,15 @@
 #include "Display.hh"
 
 Display::Display(unsigned width, unsigned height) 
-    : _screenWidth(width), _screenHeight(height)
 {
-    _pixelWidth = width / CHIP8_SCREEN_WIDTH;
-    _pixelHeight = height / CHIP8_SCREEN_HEIGHT;
+    const auto dm = sf::VideoMode::getDesktopMode();
+    _screenWidth = dm.width;
+    _screenHeight = dm.height;
+    _pixelWidth = _screenWidth / width;
+    _pixelHeight = _screenHeight / height;
 
-    _window.create(sf::VideoMode(width, height), "CHIP-8 Emulator");
-    _image.create(width, height, sf::Color(0,0,0));
+    _window.create(sf::VideoMode(_screenWidth, _screenHeight), "CHIP-8 Emulator");
+    _image.create(_screenWidth, _screenHeight, sf::Color(0,0,0));
     _texture.loadFromImage(_image);
     _sprite.setTexture(_texture);
 
