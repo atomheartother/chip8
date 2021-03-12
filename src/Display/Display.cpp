@@ -1,15 +1,18 @@
 #include "Display.hh"
+#include <iostream>
 
-Display::Display(unsigned width, unsigned height) 
+Display::Display(unsigned width, unsigned height) :
+    _width(width), _height(height)
 {
     const auto dm = sf::VideoMode::getDesktopMode();
-    _screenWidth = dm.width;
-    _screenHeight = dm.height;
-    _pixelWidth = _screenWidth / width;
-    _pixelHeight = _screenHeight / height;
+ 
+    const unsigned screenWidth = dm.width;
+    const unsigned screenHeight = dm.height;
+    _pixelWidth = screenWidth / width;
+    _pixelHeight = screenHeight / height;
 
-    _window.create(sf::VideoMode(_screenWidth, _screenHeight), "CHIP-8 Emulator");
-    _image.create(_screenWidth, _screenHeight, sf::Color(0,0,0));
+    _window.create(sf::VideoMode(screenWidth, screenHeight), "CHIP-8 Emulator");
+    _image.create(screenWidth, screenHeight, sf::Color(0,0,0));
     _texture.loadFromImage(_image);
     _sprite.setTexture(_texture);
 
@@ -21,7 +24,16 @@ bool Display::isOpen() {
 }
 
 bool Display::Poll(sf::Event& e) {
-    return _window.pollEvent(e);
+    bool evt = _window.pollEvent(e);
+    switch (e.type) {
+        case sf::Event::EventType::Closed:
+            Close();
+            break;
+        case sf::Event::EventType::Resized:
+            // Resize();
+            break;
+    }
+    return evt;
 }
 
 void Display::Close() {

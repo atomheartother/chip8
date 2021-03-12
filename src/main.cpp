@@ -9,12 +9,8 @@ int main() {
 
         sf::Event e;
         while (display.Poll(e)) {
-
-            switch (e.type) {
-            case sf::Event::EventType::Closed:
-                display.Close();
-                break;
-            }
+            // Even if we don't do anything it's important to have an event loop
+            // because Display::Poll() does some work here
         }
         display.SetPixel(8, 8);
         display.SetPixel(22, 22);

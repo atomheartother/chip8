@@ -21,8 +21,8 @@ private:
     sf::Texture         _texture;
     sf::Sprite          _sprite;
 
-    unsigned            _screenWidth;
-    unsigned            _screenHeight;
+    unsigned            _width;
+    unsigned            _height;
     unsigned            _pixelWidth;
     unsigned            _pixelHeight;
 };
