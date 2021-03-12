@@ -12,6 +12,7 @@ Display::Display(unsigned width, unsigned height) :
     _pixelHeight = screenHeight / height;
 
     _window.create(sf::VideoMode(screenWidth, screenHeight), "CHIP-8 Emulator");
+    _window.setVerticalSyncEnabled(true);
     _image.create(screenWidth, screenHeight, sf::Color(0,0,0));
     _texture.loadFromImage(_image);
     _sprite.setTexture(_texture);
