@@ -4,10 +4,9 @@
 Display::Display(unsigned width, unsigned height) :
     _width(width), _height(height)
 {
-    const auto dm = sf::VideoMode::getDesktopMode();
- 
-    const unsigned screenWidth = dm.width;
-    const unsigned screenHeight = dm.height;
+    const unsigned ratio = width / height;
+    const unsigned  screenWidth = sf::VideoMode::getDesktopMode().width;
+    const unsigned screenHeight = screenWidth / ratio;
     _pixelWidth = screenWidth / width;
     _pixelHeight = screenHeight / height;
 
