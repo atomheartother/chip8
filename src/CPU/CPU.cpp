@@ -1,8 +1,5 @@
 #include "CPU.hh"
-#include <bits/stdint-uintn.h>
 #include <functional>
-#include <cstdlib>
-#include <iostream>
 
 CPU::CPU(Memory *mem, const Keys *keys, Screen* screen) : _memory(mem), _keys(keys), _screen(screen) {}
 
@@ -164,7 +161,6 @@ void CPU::Fxx(uint16_t instruction) {
             if (k == NO_KEYS_PRESSED) {
                 _pc -= 2;
             } else {
-                std::cout << "Key pressed: " << +k << std::endl;
                 _Vx[x] = k;
             }
             break;

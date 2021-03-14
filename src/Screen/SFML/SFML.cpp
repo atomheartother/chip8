@@ -1,5 +1,4 @@
 #include "SFML.hh"
-#include <cstdint>
 
 const sf::Color BgColor = sf::Color(25,0,0);
 const sf::Color FgColor = sf::Color(0, 255, 0);

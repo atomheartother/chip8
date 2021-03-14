@@ -1,6 +1,4 @@
 #include "Screen.hh"
-#include <algorithm>
-#include <algorithm>
 #include <string>
 #include <iostream>
 
