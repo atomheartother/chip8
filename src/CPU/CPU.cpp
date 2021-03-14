@@ -164,6 +164,7 @@ void CPU::Fxx(uint16_t instruction) {
             if (k == NO_KEYS_PRESSED) {
                 _pc -= 2;
             } else {
+                std::cout << "Key pressed: " << +k << std::endl;
                 _Vx[x] = k;
             }
             break;

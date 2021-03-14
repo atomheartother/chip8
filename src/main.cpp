@@ -3,6 +3,7 @@
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
 #include "Screen/SFML/SFML.hh"
+#include "Screen/Screen.hh"
 #include <chrono>
 
 
@@ -22,11 +23,13 @@ int main(int ac, const char **av) {
     while (screen->isOpen()) {
         cpu.Tick();
         screen->Poll();
-        auto sinceLast = std::chrono::high_resolution_clock::now() - lastUpdate;
+        auto now = std::chrono::high_resolution_clock::now();
+        auto sinceLast = now - lastUpdate;
         if (std::chrono::duration_cast<std::chrono::milliseconds>(sinceLast).count() > 1000 / 60) {
             cpu.DecrementTimers();
-            screen->Draw();
+            lastUpdate = now;
         }
+        screen->Draw();
     }
     delete screen;
     return 0;
