@@ -1,20 +1,17 @@
-#include <cassert>
-#include <SFML/Graphics.hpp>
-#include "Display/Display.hh"
+#include <iostream>
+#include "CPU/CPU.hh"
+#include "Memory/Memory.hh"
 
-int main() {
-    Display display(64, 32);
-
-    while (display.isOpen()) {
-
-        sf::Event e;
-        while (display.Poll(e)) {
-            // Even if we don't do anything it's important to have an event loop
-            // because Display::Poll() does some work here
-        }
-        display.SetPixel(8, 8);
-        display.SetPixel(22, 22);
-        display.Draw();
+int main(int ac, const char **av) {
+    if (ac < 2) {
+        std::cout << "Usage: " << av[0] << " <ROM path>" << std::endl;
+        return 1;
     }
+    Memory memory;
+    const int err = memory.Load(av[1]);
+    if (err) { return err; }
+    CPU cpu;
+    cpu.ExecuteInstruction(0x00e0);
+    cpu.ExecuteInstruction(0xa220);
     return 0;
 }
