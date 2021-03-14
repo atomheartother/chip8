@@ -2,7 +2,7 @@
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
-#include "Screen/Screen.hh"
+#include "Screen/SFML/SFML.hh"
 #include <chrono>
 
 
@@ -15,17 +15,19 @@ int main(int ac, const char **av) {
     const int err = memory.Load(av[1]);
     if (err) { return err; }
     Keys keys;
-    Screen screen;
+    Screen* screen = new SFML();
 
-    CPU cpu(&memory, &keys, &screen);
+    CPU cpu(&memory, &keys, screen);
     auto lastUpdate = std::chrono::high_resolution_clock::now();
-    while (true) {
+    while (screen->isOpen()) {
         cpu.Tick();
+        screen->Poll();
         auto sinceLast = std::chrono::high_resolution_clock::now() - lastUpdate;
         if (std::chrono::duration_cast<std::chrono::milliseconds>(sinceLast).count() > 1000 / 60) {
             cpu.DecrementTimers();
-            screen.Draw();
+            screen->Draw();
         }
     }
+    delete screen;
     return 0;
 }

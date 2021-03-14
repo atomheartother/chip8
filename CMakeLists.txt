@@ -20,11 +20,11 @@ set (CMAKE_CURRENT_SOURCE_DIR "./src")
 add_executable(chip8)
 target_sources(chip8
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Display/Display.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Memory/Memory.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/CPU/CPU.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Keys/Keys.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Screen/Screen.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Screen/SFML/SFML.cpp
 )
 
 add_subdirectory(./lib/SFML)

@@ -1,8 +1,6 @@
 #include "Screen.hh"
 #include <algorithm>
 #include <algorithm>
-#include <bits/stdint-uintn.h>
-#include <iterator>
 #include <string>
 #include <iostream>
 
@@ -31,7 +29,7 @@ bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spr
     return pixelRemoved;
 }
 
-void Screen::Draw() const {
+void Screen::Draw(){
     auto px = _pixels.to_string(' ', 'X');
     std::string out;
     out.reserve(px.size() + px.size() / SCREEN_WIDTH);
@@ -43,3 +41,9 @@ void Screen::Draw() const {
     }
     std::cout << "\x1B[2J\x1B[H" << std::string(out.rbegin(), out.rend()) << std::endl;
 }
+
+bool Screen::isOpen() const {
+    return true;
+}
+
+bool Screen::Poll() { return false; }
