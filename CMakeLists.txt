@@ -15,12 +15,15 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+set (CMAKE_CURRENT_SOURCE_DIR "./src")
+
 add_executable(chip8)
 target_sources(chip8
-    PRIVATE ./src/main.cpp
-    PRIVATE ./src/Display/Display.cpp
-    PRIVATE ./src/Memory/Memory.cpp
-    PRIVATE ./src/CPU/CPU.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Display/Display.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Memory/Memory.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/CPU/CPU.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Keys/Keys.cpp
 )
 
 add_subdirectory(./lib/SFML)

@@ -3,6 +3,8 @@
 #include <functional>
 #include <cstdlib>
 
+CPU::CPU(Memory *mem, const Keys *keys) : _memory(mem), _keys(keys) {}
+
 void CPU::ExecuteInstruction(uint16_t instruction) {
     const uint8_t instructionCode = instruction >> 12;
     std::invoke(_instructions[instructionCode], this, instruction);
@@ -120,10 +122,14 @@ void CPU::Skips(uint16_t instruction) {
     const uint8_t x = getX(instruction);
     switch (getKK(instruction)) {
         case 0x9e:
-            // TODO: Skip if x is pressed
+            if (_keys->isKeyPressed(_Vx[x])) {
+                _pc += 2;
+            }
             break;
         case 0xa1:
-            // TODO: Skip if x not pressed
+            if (!_keys->isKeyPressed(_Vx[x])) {
+                _pc += 2;
+            }
             break; 
     }
 }
@@ -135,9 +141,15 @@ void CPU::Fxx(uint16_t instruction) {
         case 0x07:
             _Vx[x] = _delayTimer;
             break;
-        case 0x0a:
-            //TODO: Wait for keypress, store key in Vx
+        case 0x0a: {
+            uint8_t k = _keys->firstKeyPressed();
+            if (k == NO_KEYS_PRESSED) {
+                _pc -= 2;
+            } else {
+                _Vx[x] = k;
+            }
             break;
+        }
         case 0x15:
             _delayTimer = _Vx[x];
             break;
@@ -151,13 +163,15 @@ void CPU::Fxx(uint16_t instruction) {
             // TODO: Set I to hex sprite Vx
             break;
         case 0x33:
-            // TODO: Set BCD rep. of Vx in [I,I+1,I+2]
+            _memory->WriteB(_Vx[x] / 100, _i);
+            _memory->WriteB((_Vx[x] / 10) % 10, _i + 1);
+            _memory->WriteB(_Vx[x] % 10, _i + 2);
             break;
         case 0x55:
-            // TODO: Copy values 0 through x to I
+            _memory->Write(_Vx, _i, x);
             break;
         case 0x65:
-            // TODO: Read I values into registers 0 through x
+            _memory->Read(_Vx, _i, x);
             break;
     }
 }

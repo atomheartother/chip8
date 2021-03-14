@@ -42,3 +42,22 @@ int Memory::Load(const char* filename) {
     }
     return 0;
 }
+
+void Memory::WriteB(const uint8_t byte, uint16_t offset) {
+    offset -= PROGRAM_OFFSET;
+    _ram[offset] = byte;
+}
+
+void Memory::Write(const uint8_t *src, uint16_t offset, uint8_t length) {
+    offset -= PROGRAM_OFFSET;
+    for (uint8_t i=0; i < length; i += 1) {
+        _ram[offset + i] = src[i];
+    }
+}
+
+void Memory::Read(uint8_t *dst, uint16_t offset, uint8_t length) const {
+    offset -= PROGRAM_OFFSET;
+    for (uint8_t i = 0 ; i < length ; i += 1) {
+        dst[i] = _ram[offset + i];
+    }
+}

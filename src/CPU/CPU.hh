@@ -1,7 +1,9 @@
 #pragma once
 
-#include <bits/stdint-uintn.h>
+#include <cstdint>
 #include <sys/types.h>
+#include "../Memory/Memory.hh"
+#include "../Keys/Keys.hh"
 
 #define nnn(x) (x & 0xFFF)
 #define getX(x) ((x >> 8) & 0x0F)
@@ -10,6 +12,7 @@
 
 class CPU {
 public:
+    CPU(Memory* mem, const Keys* keys);
     typedef void (CPU::*InstructionSetPtr)(uint16_t instruction);
     typedef void InstructionSet(uint16_t instruction);
     void    Tick();
@@ -53,6 +56,8 @@ private:
         &CPU::Skips, // Exx operations
         &CPU::Fxx, // Fxx operations
     };
+    Memory* _memory;
+    const Keys*   _keys;
     uint16_t  _i = 0;
     uint16_t  _pc = 0;
     uint8_t   _delayTimer = 0;

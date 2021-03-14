@@ -32,6 +32,8 @@ bool Display::Poll(sf::Event& e) {
         case sf::Event::EventType::Resized:
             // Resize();
             break;
+        default:
+            break;
     }
     return evt;
 }
