@@ -6,9 +6,7 @@
 #include <string>
 #include <iostream>
 
-Screen::Screen() {
-    Clear();
-}
+Screen::Screen() {}
 
 void Screen::Clear() {
     _pixels.reset();
