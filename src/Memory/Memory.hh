@@ -11,12 +11,16 @@ public:
     int     Load(const char* filename);
 
     // Write from src into memory at offset, for length bytes
-    void    Write(const uint8_t* src, uint16_t offset, uint8_t length);
+    void    Write(const uint8_t* src, uint16_t vOffset, uint8_t length);
     // Write byte at offset
-    void    WriteB(const uint8_t byte, uint16_t offset);
+    void    WriteB(const uint8_t byte, uint16_t vOffset);
 
     // Read from memory into dst at offset, for length bytes
-    void    Read(uint8_t* dst, uint16_t offset, uint8_t length) const;
+    void    Read(uint8_t* dst, uint16_t vOffset, uint8_t length) const;
+
+    // Returns the VMEM address of the hexsprite with this code
+    uint16_t    HexSpriteAddress(uint8_t code) const;
 private:
+    void RAMWrite(const uint8_t* src, uint16_t offset, uint8_t length);
     uint8_t*  _ram;
 };

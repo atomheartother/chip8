@@ -160,7 +160,7 @@ void CPU::Fxx(uint16_t instruction) {
             _i += _Vx[x];
             break;
         case 0x29:
-            // TODO: Set I to hex sprite Vx
+            _i = _memory->HexSpriteAddress(_Vx[x]);
             break;
         case 0x33:
             _memory->WriteB(_Vx[x] / 100, _i);
