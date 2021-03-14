@@ -8,11 +8,9 @@
 // Interpreter took up the first 0x200 bytes of memory, which we'll mostly be ignoring,
 // but we'll be leaving room for the hex sprites.
 const uint16_t VIRT_RAM_SIZE = 0xFFFF;
-
 const uint8_t HEX_SPRITES_SIZE = 16 * 5;
-
 // This value is how much we need to offset input offsets by to get the real RAM values.
-const uint16_t PROGRAM_OFFSET = 0x200 - HEX_SPRITES_SIZE;
+const uint16_t PROGRAM_OFFSET = PROGRAM_LOAD_LOCATION - HEX_SPRITES_SIZE;
 // Physical size of ram
 const unsigned short RAM_SIZE = VIRT_RAM_SIZE - PROGRAM_OFFSET;
 
@@ -83,10 +81,18 @@ void Memory::Read(uint8_t *dst, uint16_t address, uint8_t length) const {
     }
 }
 
+uint8_t Memory::ReadB(uint16_t address) const {
+    return _ram[address - PROGRAM_OFFSET];
+}
+
 void Memory::RAMWrite(const uint8_t* src, uint16_t offset, uint8_t length) {
     std::memcpy(_ram + offset, src, length);
 }
 
 uint16_t Memory::HexSpriteAddress(uint8_t code) const {
     return (code * 5) + PROGRAM_OFFSET;
+}
+
+const uint8_t* Memory::Sprite(uint16_t address) const {
+    return _ram + (address - PROGRAM_OFFSET);
 }

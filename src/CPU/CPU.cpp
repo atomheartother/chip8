@@ -2,17 +2,25 @@
 #include <bits/stdint-uintn.h>
 #include <functional>
 #include <cstdlib>
+#include <iostream>
 
-CPU::CPU(Memory *mem, const Keys *keys) : _memory(mem), _keys(keys) {}
+CPU::CPU(Memory *mem, const Keys *keys, Screen* screen) : _memory(mem), _keys(keys), _screen(screen) {}
 
 void CPU::ExecuteInstruction(uint16_t instruction) {
     const uint8_t instructionCode = instruction >> 12;
     std::invoke(_instructions[instructionCode], this, instruction);
 }
 
+void CPU::Tick() {
+    uint8_t instruction[2];
+    _memory->Read(instruction, _pc, 2);
+    _pc += 2;
+    ExecuteInstruction((instruction[0] << 8) + instruction[1]);
+}
+
 void CPU::ClsRet(uint16_t instruction) {
     if (instruction == 0x00E0) {
-        // TODO: Clear screen
+        _screen->Clear();
     } else if (instruction == 0x00EE && _sp > 0) {
         _sp -= 1;
         _pc = _stack[_sp];
@@ -115,7 +123,8 @@ void CPU::Rnd(uint16_t instruction) {
 }
 
 void CPU::Drw(uint16_t instruction) {
-    // TODO: Draw
+    const uint8_t* sprite = _memory->Sprite(_i);
+    _Vx[0xF] = _screen->DrawSprite(_Vx[getX(instruction)], _Vx[getY(instruction)], sprite, instruction & 0xF);
 }
 
 void CPU::Skips(uint16_t instruction) {

@@ -2,6 +2,8 @@
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
+#include "Screen/Screen.hh"
+#include <unistd.h>
 
 int main(int ac, const char **av) {
     if (ac < 2) {
@@ -12,9 +14,13 @@ int main(int ac, const char **av) {
     const int err = memory.Load(av[1]);
     if (err) { return err; }
     Keys keys;
+    Screen screen;
 
-    CPU cpu(&memory, &keys);
-    cpu.ExecuteInstruction(0x00e0);
-    cpu.ExecuteInstruction(0xa220);
+    CPU cpu(&memory, &keys, &screen);
+    for (int i=0 ; i < 150 ; i += 1) {
+        cpu.Tick();
+        // screen.Draw();
+    }
+    screen.Draw();
     return 0;
 }

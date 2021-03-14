@@ -24,6 +24,7 @@ target_sources(chip8
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Memory/Memory.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/CPU/CPU.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Keys/Keys.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Screen/Screen.cpp
 )
 
 add_subdirectory(./lib/SFML)

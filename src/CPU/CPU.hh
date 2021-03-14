@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include "../Memory/Memory.hh"
 #include "../Keys/Keys.hh"
+#include "../Screen/Screen.hh"
 
 #define nnn(x) (x & 0xFFF)
 #define getX(x) ((x >> 8) & 0x0F)
@@ -12,7 +13,7 @@
 
 class CPU {
 public:
-    CPU(Memory* mem, const Keys* keys);
+    CPU(Memory* mem, const Keys* keys, Screen* screen);
     typedef void (CPU::*InstructionSetPtr)(uint16_t instruction);
     typedef void InstructionSet(uint16_t instruction);
     void    Tick();
@@ -58,8 +59,10 @@ private:
     };
     Memory* _memory;
     const Keys*   _keys;
+    Screen*       _screen;
+
     uint16_t  _i = 0;
-    uint16_t  _pc = 0;
+    uint16_t  _pc = PROGRAM_LOAD_LOCATION;
     uint8_t   _delayTimer = 0;
     uint8_t   _soundTimer = 0;
 
