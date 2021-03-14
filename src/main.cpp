@@ -2,10 +2,17 @@
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
+#include "SFML/System/Thread.hpp"
 #include "Screen/SFML/SFML.hh"
 #include "Screen/Screen.hh"
 #include <chrono>
 
+void drawThread(Screen* screen) {
+    screen->Activate();
+    while (screen->isOpen()) {
+        screen->Draw();
+    }
+}
 
 int main(int ac, const char **av) {
     if (ac < 2) {
@@ -19,18 +26,27 @@ int main(int ac, const char **av) {
     Screen* screen = new SFML();
 
     CPU cpu(&memory, &keys, screen);
-    auto lastUpdate = std::chrono::high_resolution_clock::now();
+    auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
+    auto lastExecution = std::chrono::high_resolution_clock::now();
+    screen->Deactivate();
+    sf::Thread thread(&drawThread, screen);
+    thread.launch();
+    const unsigned instructionsPerSecond = 350;
+    const unsigned timerUpdateInterval = 1000 / 60;
+    const unsigned executionInterval = 1000 / instructionsPerSecond;
     while (screen->isOpen()) {
-        cpu.Tick();
         screen->Poll();
         auto now = std::chrono::high_resolution_clock::now();
-        auto sinceLast = now - lastUpdate;
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(sinceLast).count() > 1000 / 60) {
-            cpu.DecrementTimers();
-            lastUpdate = now;
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastExecution).count() > executionInterval) {
+            cpu.Tick();
+            lastExecution = std::chrono::high_resolution_clock::now();
         }
-        screen->Draw();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTimerUpdate).count() > timerUpdateInterval) {
+            cpu.DecrementTimers();
+            lastTimerUpdate = std::chrono::high_resolution_clock::now();
+        }
     }
+    thread.wait();
     delete screen;
     return 0;
 }

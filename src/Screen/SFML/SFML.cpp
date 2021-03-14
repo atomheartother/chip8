@@ -1,10 +1,10 @@
 #include "SFML.hh"
-#include "SFML/Graphics/Color.hpp"
-#include <bits/stdint-uintn.h>
-#include <iostream>
+#include <cstdint>
 
 const sf::Color BgColor = sf::Color(25,0,0);
 const sf::Color FgColor = sf::Color(0, 255, 0);
+
+const unsigned PIXELS_GAP = 2;
 
 SFML::SFML()
 {
@@ -17,6 +17,10 @@ SFML::SFML()
     _window.create(sf::VideoMode(windowWidth, windowHeight), "CHIP-8 Emulator");
     _window.setVerticalSyncEnabled(true);
     Clear();
+}
+
+sf::Window* SFML::Window() {
+    return &_window;
 }
 
 bool SFML::isOpen() const {
@@ -46,8 +50,8 @@ void SFML::Close() {
 void SFML::SetPixel(unsigned pixelX, unsigned pixelY, const sf::Color& color) {
     unsigned xCoord = pixelX * _pixelWidth;
     unsigned yCoord = pixelY * _pixelHeight;
-    for (unsigned x = xCoord ; x < xCoord + _pixelWidth ; x += 1) {
-        for (unsigned y = yCoord ; y < yCoord + _pixelHeight ; y += 1) {
+    for (unsigned x = xCoord + PIXELS_GAP ; x < (xCoord - PIXELS_GAP) + _pixelWidth ; x += 1) {
+        for (unsigned y = (yCoord + PIXELS_GAP) ; y < (yCoord - PIXELS_GAP) + _pixelHeight ; y += 1) {
             _image.setPixel(x, y, color);
         }
     }
@@ -78,7 +82,17 @@ bool SFML::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t sprit
 }
 
 void SFML::Draw() {
-    _window.clear(BgColor);
+    if (!_shouldDraw) return;
+    _shouldDraw = false;
+    _window.clear();
     _window.draw(_sprite);
     _window.display();
+}
+
+void    SFML::Deactivate() {
+    _window.setActive(false);
+}
+
+void    SFML::Activate() {
+    _window.setActive(true);
 }

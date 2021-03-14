@@ -19,6 +19,9 @@ class Screen {
         virtual bool Poll();
         // Draw updated screen state
         virtual void Draw();
+        virtual void Deactivate() {};
+        virtual void Activate() {};
     protected:
+        bool    _shouldDraw = true;
         std::bitset<SCREEN_WIDTH * SCREEN_HEIGHT> _pixels;
 };
