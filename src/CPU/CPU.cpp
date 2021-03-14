@@ -21,6 +21,11 @@ void CPU::DecrementTimers() {
     }
     if (_soundTimer > 0) {
         _soundTimer -= 1;
+        if (_soundTimer == 0) {
+            _screen->StopBeep();
+        } else {
+            _screen->ContinueBeep();
+        }
     }
 }
 
@@ -170,6 +175,9 @@ void CPU::Fxx(uint16_t instruction) {
             break;
         case 0x18:
             _soundTimer = _Vx[x];
+            if (_soundTimer > 0) {
+                _screen->Beep();
+            }
             break;
         case 0x1e:
             _i += _Vx[x];

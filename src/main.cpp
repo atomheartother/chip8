@@ -36,6 +36,7 @@ int main(int ac, const char **av) {
     const unsigned executionInterval = getExecInterval(ac, av);
     auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
     auto lastExecution = std::chrono::high_resolution_clock::now();
+    std::cout << '\a' << std::endl;
     while (screen->isOpen()) {
         screen->Poll();
         auto now = std::chrono::high_resolution_clock::now();

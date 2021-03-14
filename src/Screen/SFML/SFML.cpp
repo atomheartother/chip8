@@ -16,6 +16,8 @@ SFML::SFML()
     _window.create(sf::VideoMode(windowWidth, windowHeight), "CHIP-8 Emulator");
     _window.setVerticalSyncEnabled(true);
     Clear();
+    _beepBuffer.loadFromFile("./res/beep.ogg");
+    _beep.setBuffer(_beepBuffer);
 }
 
 sf::Window* SFML::Window() {
@@ -94,4 +96,14 @@ void    SFML::Deactivate() {
 
 void    SFML::Activate() {
     _window.setActive(true);
+}
+
+void SFML::Beep() {
+    _beep.play();
+}
+
+void SFML::ContinueBeep() {}
+
+void SFML::StopBeep() {
+    _beep.stop();
 }

@@ -29,6 +29,14 @@ bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spr
     return pixelRemoved;
 }
 
+void Screen::Beep() {
+    std::cout << '\a';
+}
+
+void Screen::ContinueBeep() {
+    Beep();
+}
+
 void Screen::Draw(){
     if (_shouldDraw == false) { return; }
     _shouldDraw = false;

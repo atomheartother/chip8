@@ -21,6 +21,9 @@ class Screen {
         virtual void Draw();
         virtual void Deactivate() {};
         virtual void Activate() {};
+        virtual void Beep();
+        virtual void ContinueBeep();
+        virtual void StopBeep() {};
     protected:
         bool    _shouldDraw = true;
         std::bitset<SCREEN_WIDTH * SCREEN_HEIGHT> _pixels;

@@ -36,5 +36,5 @@ target_sources(chip8
 add_subdirectory(./lib/SFML)
 
 target_link_libraries(chip8
-    PRIVATE sfml-graphics
+    PRIVATE sfml-graphics sfml-audio
 )
