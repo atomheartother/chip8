@@ -2,3 +2,4 @@ build
 .cache
 .vscode
 rom/*.ch8
+chip8

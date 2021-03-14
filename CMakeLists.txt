@@ -15,16 +15,22 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-set (CMAKE_CURRENT_SOURCE_DIR "./src")
-
 add_executable(chip8)
+
+set_target_properties(chip8
+PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+
+
 target_sources(chip8
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Memory/Memory.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/CPU/CPU.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Keys/Keys.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Screen/Screen.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Screen/SFML/SFML.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Memory/Memory.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/CPU/CPU.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Keys/Keys.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Screen/Screen.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Screen/SFML/SFML.cpp
 )
 
 add_subdirectory(./lib/SFML)
