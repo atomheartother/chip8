@@ -1,6 +1,6 @@
 #include "SFML.hh"
 
-const sf::Color BgColor = sf::Color(25,0,0);
+const sf::Color BgColor = sf::Color(100,0,50);
 const sf::Color FgColor = sf::Color(0, 255, 0);
 
 const unsigned PIXELS_GAP = 2;
