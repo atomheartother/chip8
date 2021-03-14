@@ -1,6 +1,12 @@
 #pragma once
 
 #include <bits/stdint-uintn.h>
+#include <sys/types.h>
+
+#define nnn(x) (x & 0xFFF)
+#define getX(x) ((x >> 8) & 0x0F)
+#define getY(x) ((x >> 4) & 0x0F)
+#define getKK(x) (x & 0xFF)
 
 class CPU {
 public:
@@ -26,10 +32,8 @@ private:
     InstructionSet   Skips;
     InstructionSet   Fxx;
 
-    unsigned char   _Vx[16] = {0};
-    unsigned short  _i = 0;
-    unsigned short  _pc = 0;
-    unsigned short  _stack[16] = {0};
+    uint8_t   _Vx[16] = {0};
+    uint16_t  _stack[16] = {0};
 
     InstructionSetPtr _instructions[16] = {
         &CPU::ClsRet, // 0xx operations
@@ -49,8 +53,12 @@ private:
         &CPU::Skips, // Exx operations
         &CPU::Fxx, // Fxx operations
     };
-    unsigned char   _delayTimer = 0;
-    unsigned char   _soundTimer = 0;
+    uint16_t  _i = 0;
+    uint16_t  _pc = 0;
+    uint8_t   _delayTimer = 0;
+    uint8_t   _soundTimer = 0;
 
+    // SP matches the SIZE of the current stack
+    // _stack[SP-1] to get the address at the top of the stack
     unsigned char  _sp = 0;
 };
