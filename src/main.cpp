@@ -1,3 +1,4 @@
+#include <exception>
 #include <iostream>
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
@@ -6,6 +7,7 @@
 #include "Screen/SFML/SFML.hh"
 #include "Screen/Screen.hh"
 #include <chrono>
+#include <string>
 
 void drawThread(Screen* screen) {
     screen->Activate();
@@ -16,7 +18,7 @@ void drawThread(Screen* screen) {
 
 int main(int ac, const char **av) {
     if (ac < 2) {
-        std::cout << "Usage: " << av[0] << " <ROM path>" << std::endl;
+        std::cout << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
         return 1;
     }
     Memory memory;
@@ -31,7 +33,14 @@ int main(int ac, const char **av) {
     screen->Deactivate();
     sf::Thread thread(&drawThread, screen);
     thread.launch();
-    const unsigned instructionsPerSecond = 350;
+    unsigned instructionsPerSecond = 350;
+    if (ac > 2) {
+        try {
+            instructionsPerSecond = std::stoi(av[2]);
+        } catch (const std::exception& e) {
+            std::cout << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
+        }
+    }
     const unsigned timerUpdateInterval = 1000 / 60;
     const unsigned executionInterval = 1000 / instructionsPerSecond;
     while (screen->isOpen()) {
