@@ -5,7 +5,7 @@ Only tested on linux but this *should* work on other platforms... :I
 !["Brick screenshot"](res/screenshot.png?raw=true)
 
 ## Installation
-- Clone the repo (along with the submodules!)
+- `git clone --recurse-submodules git@github.com:atomheartother/chip8.git`
 - Install `cmake`
 - `mkdir build && cd build && cmake .. && cmake --build`
 
