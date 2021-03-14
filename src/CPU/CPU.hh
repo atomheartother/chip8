@@ -16,6 +16,7 @@ public:
     CPU(Memory* mem, const Keys* keys, Screen* screen);
     typedef void (CPU::*InstructionSetPtr)(uint16_t instruction);
     typedef void InstructionSet(uint16_t instruction);
+    void    DecrementTimers();
     void    Tick();
     void    ExecuteInstruction(uint16_t instruction);
 private:

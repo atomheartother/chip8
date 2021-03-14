@@ -18,6 +18,15 @@ void CPU::Tick() {
     ExecuteInstruction((instruction[0] << 8) + instruction[1]);
 }
 
+void CPU::DecrementTimers() {
+    if (_delayTimer > 0) {
+        _delayTimer -= 1;
+    }
+    if (_soundTimer > 0) {
+        _soundTimer -= 1;
+    }
+}
+
 void CPU::ClsRet(uint16_t instruction) {
     if (instruction == 0x00E0) {
         _screen->Clear();

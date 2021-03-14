@@ -14,6 +14,8 @@ class Screen {
         // Draw a sprite at coordinates
         bool    DrawSprite(uint8_t x, uint8_t y, const uint8_t* sprite, uint8_t spriteSize);
 
+        bool isOpen() const;
+
         // Draw updated screen state
         void Draw() const;
     protected:

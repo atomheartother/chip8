@@ -1,6 +1,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include "Keys.hh"
 
+#include <iostream>
+
 Keys::Keys() : 
     _keys {
         sf::Keyboard::X, // 0

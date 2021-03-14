@@ -33,12 +33,13 @@ bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spr
 
 void Screen::Draw() const {
     auto px = _pixels.to_string(' ', 'X');
-    std::cout << std::endl;
-    for (uint32_t i = px.size() ; i > 0 ; i -= 1) {
-        std::cout << px[i];
-        if (!(i % SCREEN_WIDTH)) {
-            std::cout << std::endl;
+    std::string out;
+    out.reserve(px.size() + px.size() / SCREEN_WIDTH);
+    for (uint32_t i = 0 ; i < px.size() ; i += 1) {
+        if (!(i % SCREEN_WIDTH) && i) {
+            out.push_back('\n');
         }
+        out.push_back(px[i]);
     }
-    std::cout << px[0] << std::endl;
+    std::cout << "\x1B[2J\x1B[H" << std::string(out.rbegin(), out.rend()) << std::endl;
 }

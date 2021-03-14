@@ -3,7 +3,8 @@
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
 #include "Screen/Screen.hh"
-#include <unistd.h>
+#include <chrono>
+
 
 int main(int ac, const char **av) {
     if (ac < 2) {
@@ -17,10 +18,14 @@ int main(int ac, const char **av) {
     Screen screen;
 
     CPU cpu(&memory, &keys, &screen);
-    for (int i=0 ; i < 150 ; i += 1) {
+    auto lastUpdate = std::chrono::high_resolution_clock::now();
+    while (true) {
         cpu.Tick();
-        // screen.Draw();
+        auto sinceLast = std::chrono::high_resolution_clock::now() - lastUpdate;
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(sinceLast).count() > 1000 / 60) {
+            cpu.DecrementTimers();
+            screen.Draw();
+        }
     }
-    screen.Draw();
     return 0;
 }
