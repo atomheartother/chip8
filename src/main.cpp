@@ -16,6 +16,18 @@ void drawThread(Screen* screen) {
     }
 }
 
+unsigned getExecInterval(int ac, const char** av) {
+    unsigned instructionsPerSecond = 350;
+    if (ac > 2) {
+        try {
+            instructionsPerSecond = std::stoi(av[2]);
+        } catch (const std::exception& e) {
+            std::cout << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
+        }
+    }
+    return 1000 / instructionsPerSecond;
+}
+
 int main(int ac, const char **av) {
     if (ac < 2) {
         std::cout << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
@@ -28,21 +40,13 @@ int main(int ac, const char **av) {
     Screen* screen = new SFML();
 
     CPU cpu(&memory, &keys, screen);
-    auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
-    auto lastExecution = std::chrono::high_resolution_clock::now();
     screen->Deactivate();
     sf::Thread thread(&drawThread, screen);
     thread.launch();
-    unsigned instructionsPerSecond = 350;
-    if (ac > 2) {
-        try {
-            instructionsPerSecond = std::stoi(av[2]);
-        } catch (const std::exception& e) {
-            std::cout << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
-        }
-    }
     const unsigned timerUpdateInterval = 1000 / 60;
-    const unsigned executionInterval = 1000 / instructionsPerSecond;
+    const unsigned executionInterval = getExecInterval(ac, av);
+    auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
+    auto lastExecution = std::chrono::high_resolution_clock::now();
     while (screen->isOpen()) {
         screen->Poll();
         auto now = std::chrono::high_resolution_clock::now();
