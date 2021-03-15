@@ -1,5 +1,4 @@
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_keyboard.h>
+#include <SDL.h>
 #include "Keys.hh"
 
 Keys::Keys() : 
