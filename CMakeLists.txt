@@ -48,7 +48,7 @@ target_link_libraries(chip8
 
 set(OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 if (WIN32)
-  set_target_properties(chip8 sfml-graphics sfml-audio sfml-window sfml-system
+  set_target_properties(chip8 SDL2
   PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
     LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
