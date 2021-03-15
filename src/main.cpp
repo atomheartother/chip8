@@ -3,7 +3,6 @@
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
-#include "SFML/System/Thread.hpp"
 #include "Screen/SFML/SFML.hh"
 #include "Screen/Screen.hh"
 #include <chrono>
