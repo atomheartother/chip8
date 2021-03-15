@@ -20,15 +20,13 @@ class Screen {
         virtual bool Poll();
         // Draw updated screen state
         virtual void Draw();
-        virtual void Deactivate() {};
-        virtual void Activate() {};
         virtual void Beep();
         virtual void ContinueBeep();
         virtual void StopBeep() {};
     protected:
         // This function is called at each pixel update
         // it is called from within DrawSprite
-        virtual void UpdatePixel(uint8_t, uint8_t) {};
+        virtual void UpdatePixel(uint8_t, uint8_t, bool) {};
 
         bool    _shouldDraw = true;
         std::bitset<SCREEN_WIDTH * SCREEN_HEIGHT> _pixels;

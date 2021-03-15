@@ -25,6 +25,7 @@ target_sources(chip8
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/CPU/CPU.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Keys/Keys.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Screen/Screen.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Screen/SDL/SDL.cpp
 )
 
 # add dependencies

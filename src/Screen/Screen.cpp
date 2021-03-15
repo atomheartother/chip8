@@ -24,7 +24,7 @@ bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spr
             bool newSet = pxSet ^ set;
             _pixels.set(lineOffset + col, newSet);
             if (pxSet != newSet) {
-                UpdatePixel(col, line);
+                UpdatePixel(col, line, newSet);
             }
             if (!pixelRemoved && pxSet && set) {
                 pixelRemoved = true;

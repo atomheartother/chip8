@@ -3,7 +3,7 @@
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
-#include "Screen/Screen.hh"
+#include "Screen/SDL/SDL.hh"
 #include <chrono>
 
 unsigned getExecInterval(int ac, const char** av) {
@@ -27,7 +27,7 @@ int main(int ac, const char **av) {
     const int err = memory.Load(av[1]);
     if (err) { return err; }
     Keys keys;
-    Screen* screen = new Screen();
+    Screen* screen = new SDL();
 
     CPU cpu(&memory, &keys, screen);
     const unsigned timerUpdateInterval = 1000 / 60;
@@ -49,5 +49,6 @@ int main(int ac, const char **av) {
         screen->Draw();
     }
     delete screen;
+    std::cout << "Exiting cleanly" << std::endl;
     return 0;
 }
