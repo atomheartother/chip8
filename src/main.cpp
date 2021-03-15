@@ -3,7 +3,6 @@
 #include "CPU/CPU.hh"
 #include "Keys/Keys.hh"
 #include "Memory/Memory.hh"
-#include "Screen/SFML/SFML.hh"
 #include "Screen/Screen.hh"
 #include <chrono>
 
@@ -28,7 +27,7 @@ int main(int ac, const char **av) {
     const int err = memory.Load(av[1]);
     if (err) { return err; }
     Keys keys;
-    Screen* screen = new SFML();
+    Screen* screen = new Screen();
 
     CPU cpu(&memory, &keys, screen);
     const unsigned timerUpdateInterval = 1000 / 60;

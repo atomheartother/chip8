@@ -25,13 +25,24 @@ target_sources(chip8
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/CPU/CPU.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Keys/Keys.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Screen/Screen.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Screen/SFML/SFML.cpp
 )
 
-add_subdirectory(./lib/SFML)
+# add dependencies
+include(cmake/CPM.cmake)
+
+set(CPM_SOURCE_CACHE ${CMAKE_CURRENT_SOURCE_DIR}/lib/)
+
+CPMAddPackage(
+  NAME SDL2         # The unique name of the dependency (should be the exported target's name)
+  GIT_TAG release-2.0.14      # The minimum version of the dependency (optional, defaults to 0)
+  GIT_REPOSITORY git@github.com:libsdl-org/SDL.git
+  OPTIONS
+    "SDL_SHARED On"
+    "SDL_STATIC Off"
+)
 
 target_link_libraries(chip8
-    PRIVATE sfml-graphics sfml-audio
+    PRIVATE SDL2
 )
 
 set(OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)

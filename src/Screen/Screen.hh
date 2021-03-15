@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bits/stdint-uintn.h>
 #include <cstdint>
 #include <bitset>
 
@@ -13,7 +14,7 @@ class Screen {
         // Clear the screen
         virtual void    Clear();
         // Draw a sprite at coordinates
-        virtual bool    DrawSprite(uint8_t x, uint8_t y, const uint8_t* sprite, uint8_t spriteSize);
+        bool    DrawSprite(uint8_t x, uint8_t y, const uint8_t* sprite, uint8_t spriteSize);
 
         virtual bool isOpen() const;
         virtual bool Poll();
@@ -25,6 +26,10 @@ class Screen {
         virtual void ContinueBeep();
         virtual void StopBeep() {};
     protected:
+        // This function is called at each pixel update
+        // it is called from within DrawSprite
+        virtual void UpdatePixel(uint8_t, uint8_t) {};
+
         bool    _shouldDraw = true;
         std::bitset<SCREEN_WIDTH * SCREEN_HEIGHT> _pixels;
 };

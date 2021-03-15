@@ -1,4 +1,5 @@
 #include "Screen.hh"
+#include <bits/stdint-uintn.h>
 #include <string>
 #include <iostream>
 
@@ -14,12 +15,17 @@ bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spr
     bool pixelRemoved = false;
     for (uint8_t spriteY = 0 ; spriteY < spriteSize ; spriteY += 1) {
         uint8_t spriteByte = sprite[spriteY];
-        uint16_t lineOffset = ((y + spriteY) % SCREEN_HEIGHT) * SCREEN_WIDTH;
+        uint8_t line = (y + spriteY) % SCREEN_HEIGHT;
+        uint16_t lineOffset = line * SCREEN_WIDTH;
         for (uint8_t spriteX = 0 ; spriteX < 8 ; spriteX += 1) {
             bool set = (spriteByte >> (7 - spriteX)) & 0x1;
             uint8_t col = (x + spriteX) % SCREEN_WIDTH;
             bool pxSet = _pixels.test(lineOffset + col);
-            _pixels.set(lineOffset + col, pxSet ^ set);
+            bool newSet = pxSet ^ set;
+            _pixels.set(lineOffset + col, newSet);
+            if (pxSet != newSet) {
+                UpdatePixel(col, line);
+            }
             if (!pixelRemoved && pxSet && set) {
                 pixelRemoved = true;
             }
