@@ -19,12 +19,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 add_executable(chip8)
 
-set_target_properties(chip8
-PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-
+set(OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 target_sources(chip8
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
@@ -39,4 +34,11 @@ add_subdirectory(./lib/SFML)
 
 target_link_libraries(chip8
     PRIVATE sfml-graphics sfml-audio
+)
+
+set_target_properties(chip8 sfml-graphics sfml-audio
+PROPERTIES
+  ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+  LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+  RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
 )
