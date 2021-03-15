@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bits/stdint-uintn.h>
 #include <cstdint>
 
 const uint16_t PROGRAM_LOAD_LOCATION = 0x200;
