@@ -63,6 +63,7 @@ void SDL::UpdatePixel(uint8_t x, uint8_t y, bool set) {
 void SDL::Draw() {
     SetBackgroundColor();
     SDL_RenderClear(_renderer);
+    if (_rects.size() < 1) { return; }
     SetForegroundColor();
     SDL_Rect* rects = &_rects[0];
     SDL_RenderFillRects(_renderer, rects, _rects.size());
