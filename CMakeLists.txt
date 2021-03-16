@@ -30,10 +30,15 @@ target_sources(chip8
 
 
 if (EMSCRIPTEN)
-  set(USE_FLAGS "-s WASM=1 -s USE_SDL=2")
+  set(USE_FLAGS "-s WASM=1 -s USE_SDL=2 -s")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
-  set(CMAKE_EXECUTABLE_SUFFIX .html)
+  set(CMAKE_EXECUTABLE_SUFFIX .js)
+  add_compile_definitions(chip8 EMSCRIPTEN)
+  set_target_properties(chip8
+  PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/public
+  )
 else()
   # Not compiling to WASM, set up desktop stuff
   include(cmake/CPM.cmake)

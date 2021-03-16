@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Ch++ip-8</title>
+  </head>
+  <body style="padding: 15px">
+    <h1>Chip-8 Emulator</h1>
+    <!-- Create the canvas that the C++ code will draw into -->
+    <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <!-- Allow the C++ to access the canvas element --> 
+    <script type='text/javascript'>
+      var Module = {
+          canvas: (function() { return document.getElementById('canvas'); })()
+      };
+    </script>
+    <script async src="./chip8.js"></script>
+  </body>
+</html>
