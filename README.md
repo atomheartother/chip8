@@ -1,6 +1,6 @@
 # C++ip-8
 This is a super simple CHIP-8 emulator weekend project.
-Only tested on linux but this *should* work on other platforms... :I
+Fully functional on Linux and Windows, not tested on MacOS.
 
 !["Brick screenshot"](res/screenshot.png?raw=true)
 
