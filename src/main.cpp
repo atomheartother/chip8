@@ -1,4 +1,4 @@
-#include <bits/stdint-uintn.h>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include "CPU/CPU.hh"
@@ -6,6 +6,9 @@
 #include "Memory/Memory.hh"
 #include "Screen/SDL/SDL.hh"
 #include <chrono>
+#ifdef EMSCRIPTEN
+# include <emscripten.h>
+#endif
 
 typedef std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
 
@@ -17,18 +20,6 @@ struct context
     timestamp* lastExecution;
     unsigned    executionInterval;
 };
-
-unsigned getExecInterval(int ac, const char** av) {
-    unsigned instructionsPerSecond = 350;
-    if (ac > 2) {
-        try {
-            instructionsPerSecond = std::stoi(av[2]);
-        } catch (const std::exception& e) {
-            std::cout << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
-        }
-    }
-    return 1000 / instructionsPerSecond;
-}
 
 const unsigned timerUpdateInterval = 1000 / 60;
 
@@ -47,26 +38,9 @@ void    mainloop(void* arg) {
     ctx->screen->Draw();
 }
 
-#ifdef EMSCRIPTEN
-# include <emscripten.h>
-
-void    loadROM(uint8_t buffer) {
-    // Somehow load the ROM here
-    // emscripten_set_main_loop_arg(mainloop, &ctx, -1, 1);
-}
-#endif
-
-
-int main(int ac, const char **av) {
-#ifdef EMSCRIPTEN
-    return 0;
-#endif
-    if (ac < 2) {
-        std::cout << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
-        return 1;
-    }
+int loadRom(const char* filename, unsigned execInterval) {
     Memory memory;
-    const int err = memory.Load(av[1]);
+    const int err = memory.Load(filename);
     if (err) { return err; }
     Keys keys;
     Screen* screen = new SDL();
@@ -80,10 +54,50 @@ int main(int ac, const char **av) {
     ctx.cpu = &cpu;
     ctx.lastTimerUpdate = &lastTimerUpdate;
     ctx.lastExecution = &lastExecution;
-    ctx.executionInterval = getExecInterval(ac, av);
+    ctx.executionInterval = execInterval;
+#ifdef EMSCRIPTEN
+    emscripten_set_main_loop_arg(mainloop, &ctx, -1, 1);
+#else
     while (screen->isOpen()) {
         mainloop(&ctx);
     }
+#endif
     delete screen;
     return 0;
+}
+
+#ifdef EMSCRIPTEN
+
+# ifdef __cplusplus
+extern "C" {
+# endif
+
+EMSCRIPTEN_KEEPALIVE void    emLoadRom(char *filename) {
+    loadRom(filename, 1000 / 350);
+    free(filename);
+}
+
+# ifdef __cplusplus
+}
+# endif
+#endif
+
+unsigned getExecInterval(int ac, const char** av) {
+    unsigned instructionsPerSecond = 350;
+    if (ac > 2) {
+        try {
+            instructionsPerSecond = std::stoi(av[2]);
+        } catch (const std::exception& e) {
+            std::cout << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
+        }
+    }
+    return 1000 / instructionsPerSecond;
+}
+
+int main(int ac, const char **av) {
+    if (ac < 2) {
+        std::cout << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
+        return 1;
+    }
+    return loadRom(av[1], getExecInterval(ac, av));
 }

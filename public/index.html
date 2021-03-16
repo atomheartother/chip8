@@ -7,6 +7,9 @@
   </head>
   <body style="padding: 15px">
     <h1>Chip-8 Emulator</h1>
+    <form onsubmit="return onSubmit()">
+      <input type="text" id="fileNameInput" placeholder="filename.chip8" />
+    </form>
     <!-- Create the canvas that the C++ code will draw into -->
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     <!-- Allow the C++ to access the canvas element --> 
@@ -15,6 +18,14 @@
           canvas: (function() { return document.getElementById('canvas'); })()
       };
     </script>
-    <script async src="./chip8.js"></script>
+    <script src="./chip8.js"></script>
+    <script type="text/javascript">
+      function onSubmit() {
+        const { value } = document.getElementById('fileNameInput');
+        const ptr = allocate(intArrayFromString(value));
+        _emLoadRom(ptr);
+        return false;
+      }
+    </script>
   </body>
 </html>

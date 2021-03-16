@@ -1,5 +1,6 @@
 #include "CPU.hh"
 #include <functional>
+#include <iostream>
 
 CPU::CPU(Memory *mem, const Keys *keys, Screen* screen) : _memory(mem), _keys(keys), _screen(screen) {}
 
