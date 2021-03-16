@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Screen.hh"
 #include "SDL_render.h"
 #include "SDL_video.h"

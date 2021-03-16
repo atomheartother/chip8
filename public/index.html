@@ -20,10 +20,10 @@
     </script>
     <script src="./chip8.js"></script>
     <script type="text/javascript">
+      const loadRom = Module.cwrap('emLoadRom', null, ['string']);
       function onSubmit() {
         const { value } = document.getElementById('fileNameInput');
-        const ptr = allocate(intArrayFromString(value));
-        _emLoadRom(ptr);
+        loadRom(value);
         return false;
       }
     </script>
