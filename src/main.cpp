@@ -57,7 +57,7 @@ int loadRom(const char* filename, unsigned execInterval) {
     ctx.lastExecution = &lastExecution;
     ctx.executionInterval = execInterval;
 #ifdef EMSCRIPTEN
-        emscripten_set_main_loop_arg(mainloop, &ctx, -1, 0);
+        emscripten_set_main_loop_arg(mainloop, &ctx, 10000, 0);
         // We can't return or everything crashes!
         std::exit(0);
 #else
