@@ -8,6 +8,7 @@
 #include <chrono>
 #ifdef EMSCRIPTEN
 # include <emscripten.h>
+# include <cstdlib>
 #endif
 
 typedef std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
@@ -57,6 +58,8 @@ int loadRom(const char* filename, unsigned execInterval) {
     ctx.executionInterval = execInterval;
 #ifdef EMSCRIPTEN
         emscripten_set_main_loop_arg(mainloop, &ctx, -1, 0);
+        // We can't return or everything crashes!
+        std::exit(0);
 #else
     while (screen->isOpen()) {
         mainloop(&ctx);
@@ -77,7 +80,7 @@ extern "C" {
 # endif
 
 EMSCRIPTEN_KEEPALIVE void    emLoadRom(char *filename) {
-    loadRom(filename, 1000 / 350);
+    loadRom(filename, 1000 / 500);
     free(filename);
 }
 

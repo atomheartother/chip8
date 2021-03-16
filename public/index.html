@@ -23,7 +23,11 @@
       const loadRom = Module.cwrap('emLoadRom', null, ['string']);
       function onSubmit() {
         const { value } = document.getElementById('fileNameInput');
-        loadRom(value);
+        try {
+          loadRom(value);
+        } catch (e) {
+          console.log("Program launched successfully");
+        }
         return false;
       }
     </script>
