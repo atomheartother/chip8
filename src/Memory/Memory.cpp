@@ -44,22 +44,22 @@ Memory::~Memory() {
 int Memory::Load(const char* filename) {
     std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in) {
-        std::cout << "File not found: " << filename << std::endl;
+        std::cerr << "File not found: " << filename << std::endl;
         return 2;
     }
 
     in.seekg(0, in.end);
     const int length = in.tellg();
     in.seekg(0, in.beg);
-
+    std::cout << "[RAM] Loading program " << filename << " (" << length << "B)" << std::endl;
     if (length > RAM_SIZE) {
-        std::cout << "Program " << filename << " is too large for RAM: " << length << "B" << std::endl;
+        std::cerr << "Program " << filename << " is too large for RAM: " << length << "B" << std::endl;
         return 3;
     }
 
     in.read(reinterpret_cast<char*>(_ram + HEX_SPRITES_SIZE), length);
     if (!in) {
-        std::cout << "Couldn't load program, only read " << in.gcount() << "B" << std::endl;
+        std::cerr << "Couldn't load program, only read " << in.gcount() << "B" << std::endl;
         return 4;
     }
     return 0;

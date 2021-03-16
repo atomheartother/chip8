@@ -1,16 +1,12 @@
 #include "SDL.hh"
-#include "SDL_events.h"
-#include "SDL_hints.h"
-#include "SDL_pixels.h"
-#include "SDL_render.h"
-#include "SDL_video.h"
 #include <SDL.h>
 #include <algorithm>
+#include <iostream>
 
 const unsigned PIXEL_SIZE = 12;
 const unsigned PIXEL_GAP = 2;
 
-SDL::SDL() {
+ScreenSDL::ScreenSDL() {
     uint16_t width = SCREEN_WIDTH * PIXEL_SIZE;
     uint16_t height = SCREEN_HEIGHT * PIXEL_SIZE;
 
@@ -22,26 +18,26 @@ SDL::SDL() {
     Clear();
 }
 
-SDL::~SDL() {
+ScreenSDL::~ScreenSDL() {
     SDL_DestroyTexture(_texture);
     SDL_DestroyRenderer(_renderer);
     SDL_DestroyWindow(_window);
 }
 
-void SDL::Clear() {
+void ScreenSDL::Clear() {
     Screen::Clear();
     _rects.clear();
 }
 
-void SDL::SetForegroundColor() {
+void ScreenSDL::SetForegroundColor() {
     SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
 }
 
-void SDL::SetBackgroundColor() {
+void ScreenSDL::SetBackgroundColor() {
     SDL_SetRenderDrawColor(_renderer, 100, 0, 50, 255);
 }
 
-void SDL::UpdatePixel(uint8_t x, uint8_t y, bool set) {
+void ScreenSDL::UpdatePixel(uint8_t x, uint8_t y, bool set) {
     int realX = x * PIXEL_SIZE + PIXEL_GAP;
     int realY = y * PIXEL_SIZE + PIXEL_GAP;
     if (set) {
@@ -60,7 +56,7 @@ void SDL::UpdatePixel(uint8_t x, uint8_t y, bool set) {
     }
 }
 
-void SDL::Draw() {
+void ScreenSDL::Draw() {
     SetBackgroundColor();
     SDL_RenderClear(_renderer);
     if (_rects.size() < 1) { return; }
@@ -70,11 +66,11 @@ void SDL::Draw() {
     SDL_RenderPresent(_renderer);
 }
 
-bool SDL::isOpen() const {
+bool ScreenSDL::isOpen() const {
     return _open;
 }
 
-bool SDL::Poll() {
+bool ScreenSDL::Poll() {
     SDL_Event e;
     bool res = SDL_PollEvent(&e);
     switch (e.type) {

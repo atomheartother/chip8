@@ -4,10 +4,10 @@
 #include <cstdint>
 #include <vector>
 
-class SDL : public Screen {
+class ScreenSDL : public Screen {
 public:
-    SDL();
-    ~SDL();
+    ScreenSDL();
+    ~ScreenSDL();
 
     void Clear();
     bool isOpen() const;

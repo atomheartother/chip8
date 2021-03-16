@@ -39,30 +39,34 @@ void    mainloop(void* arg) {
 }
 
 int loadRom(const char* filename, unsigned execInterval) {
-    Memory memory;
-    const int err = memory.Load(filename);
+    Memory* memory = new Memory();
+    const int err = memory->Load(filename);
     if (err) { return err; }
-    Keys keys;
-    Screen* screen = new SDL();
+    Keys* keys = new Keys();
+    Screen* screen = new ScreenSDL();
 
-    CPU cpu(&memory, &keys, screen);
+    CPU* cpu = new CPU(memory, keys, screen);
     auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
     auto lastExecution = std::chrono::high_resolution_clock::now();
     std::cout << '\a' << std::endl;
     context ctx;
     ctx.screen = screen;
-    ctx.cpu = &cpu;
+    ctx.cpu = cpu;
     ctx.lastTimerUpdate = &lastTimerUpdate;
     ctx.lastExecution = &lastExecution;
     ctx.executionInterval = execInterval;
 #ifdef EMSCRIPTEN
-    emscripten_set_main_loop_arg(mainloop, &ctx, -1, 1);
+    emscripten_set_main_loop_arg(mainloop, &ctx, -1, 0);
 #else
     while (screen->isOpen()) {
         mainloop(&ctx);
     }
 #endif
+    delete cpu;
     delete screen;
+    delete keys;
+    delete memory;
+    std::cout << "Exiting cleanly." << std::endl;
     return 0;
 }
 
@@ -88,7 +92,7 @@ unsigned getExecInterval(int ac, const char** av) {
         try {
             instructionsPerSecond = std::stoi(av[2]);
         } catch (const std::exception& e) {
-            std::cout << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
+            std::cerr << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
         }
     }
     return 1000 / instructionsPerSecond;
@@ -96,7 +100,7 @@ unsigned getExecInterval(int ac, const char** av) {
 
 int main(int ac, const char **av) {
     if (ac < 2) {
-        std::cout << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
+        std::cerr << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
         return 1;
     }
     return loadRom(av[1], getExecInterval(ac, av));
