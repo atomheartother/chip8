@@ -18,7 +18,6 @@ public:
     void Draw();
     void UpdatePixel(uint8_t x, uint8_t y, bool set);
     void Beep();
-    void ContinueBeep();
     void StopBeep();
 
     float           time;
