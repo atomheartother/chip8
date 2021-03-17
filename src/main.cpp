@@ -95,7 +95,7 @@ extern "C" {
 # endif
 
 EMSCRIPTEN_KEEPALIVE void    emLoadRom(char *filename) {
-    loadRom(filename, ClockUnit / 500);
+    loadRom(filename, clockUnit / 500);
     free(filename);
 }
 
