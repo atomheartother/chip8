@@ -49,13 +49,13 @@ int loadRom(const char* filename, unsigned execInterval) {
     CPU* cpu = new CPU(memory, keys, screen);
     auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
     auto lastExecution = std::chrono::high_resolution_clock::now();
-    std::cout << '\a' << std::endl;
     context ctx;
     ctx.screen = screen;
     ctx.cpu = cpu;
     ctx.lastTimerUpdate = &lastTimerUpdate;
     ctx.lastExecution = &lastExecution;
     ctx.executionInterval = execInterval;
+    std::cout << "[EMU] Starting execution loop." << std::endl;
 #ifdef EMSCRIPTEN
         emscripten_set_main_loop_arg(mainloop, &ctx, 10000, 0);
         // We can't return or everything crashes!
@@ -68,7 +68,7 @@ int loadRom(const char* filename, unsigned execInterval) {
     delete screen;
     delete keys;
     delete memory;
-    std::cout << "Exiting cleanly." << std::endl;
+    std::cout << "[EMU] Exiting cleanly." << std::endl;
     return 0;
 #endif
 }
