@@ -6,6 +6,7 @@
 #include "Memory/Memory.hh"
 #include "Screen/SDL/SDL.hh"
 #include <chrono>
+#include <ratio>
 #ifdef EMSCRIPTEN
 # include <emscripten.h>
 # include <cstdlib>
@@ -23,21 +24,26 @@ struct context
     double    executionInterval;
 };
 
-const double timerUpdateInterval = 1000000.0 / 60;
-const double frameInterval = 1000000.0 / 60;
+// Set the clock resolution
+typedef std::chrono::nanoseconds ClockResolution;
+const double clockUnit = ClockResolution::period::den;
+const std::string unitString  = "ns";
+
+const double timerUpdateInterval = clockUnit / 60;
+const double frameInterval = clockUnit / 60;
 
 void    mainloop(void* arg) {
     context *ctx = static_cast<context*>(arg);
     ctx->screen->Poll();
-    if (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - *ctx->lastTimerUpdate).count() > timerUpdateInterval) {
+    if (std::chrono::duration_cast<ClockResolution>(std::chrono::high_resolution_clock::now() - *ctx->lastTimerUpdate).count() > timerUpdateInterval) {
         *ctx->lastTimerUpdate = std::chrono::high_resolution_clock::now();
         ctx->cpu->DecrementTimers();
     }
-    if (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - *ctx->lastExecution).count() > ctx->executionInterval) {
+    if (std::chrono::duration_cast<ClockResolution>(std::chrono::high_resolution_clock::now() - *ctx->lastExecution).count() > ctx->executionInterval) {
         *ctx->lastExecution = std::chrono::high_resolution_clock::now();
         ctx->cpu->Tick();
     }
-    if (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - *ctx->lastFrame).count() > frameInterval) { 
+    if (std::chrono::duration_cast<ClockResolution>(std::chrono::high_resolution_clock::now() - *ctx->lastFrame).count() > frameInterval) { 
         *ctx->lastFrame = std::chrono::high_resolution_clock::now();
         ctx->screen->Draw();
     }
@@ -61,9 +67,9 @@ int loadRom(const char* filename, double execInterval) {
     ctx.lastExecution = &lastExecution;
     ctx.executionInterval = execInterval;
     ctx.lastFrame = &lastFrame;
-    std::cout << "[EMU] CPU interval is " << +execInterval << "µs" << std::endl;
-    std::cout << "[EMU] Frame interval is " << +frameInterval << "µs" << std::endl;
-    std::cout << "[EMU] 60Hz clock interval is " << +timerUpdateInterval << "µs" << std::endl;
+    std::cout << "[EMU] CPU interval is " << +execInterval << unitString << std::endl;
+    std::cout << "[EMU] Frame interval is " << +frameInterval << unitString << std::endl;
+    std::cout << "[EMU] 60Hz clock interval is " << +timerUpdateInterval << unitString << std::endl;
         std::cout << "[EMU] Starting execution loop." << std::endl;
 #ifdef EMSCRIPTEN
         emscripten_set_main_loop_arg(mainloop, &ctx, 10000, 0);
@@ -89,7 +95,7 @@ extern "C" {
 # endif
 
 EMSCRIPTEN_KEEPALIVE void    emLoadRom(char *filename) {
-    loadRom(filename, 1000000 / 500);
+    loadRom(filename, ClockUnit / 500);
     free(filename);
 }
 
@@ -107,7 +113,7 @@ double getExecInterval(int ac, const char** av) {
             std::cerr << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
         }
     }
-    return 1000000.0 / instructionsPerSecond;
+    return clockUnit / instructionsPerSecond;
 }
 
 int main(int ac, const char **av) {
