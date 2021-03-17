@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Screen.hh"
+#include "SDL_audio.h"
 #include "SDL_render.h"
 #include "SDL_video.h"
 #include <cstdint>
@@ -16,12 +17,20 @@ public:
     bool Poll();
     void Draw();
     void UpdatePixel(uint8_t x, uint8_t y, bool set);
+    void Beep();
+    void ContinueBeep();
+    void StopBeep();
+
+    float           time;
 private:
     void    SetBackgroundColor();
     void    SetForegroundColor();
+    std::vector<SDL_Rect> _rects;
     SDL_Window*     _window;
     SDL_Renderer*   _renderer;
     SDL_Texture*    _texture;
+    SDL_AudioSpec   _spec;
+    SDL_AudioSpec   _aspec;
+    SDL_AudioDeviceID _audioDeviceId;
     bool            _open = false;
-    std::vector<SDL_Rect> _rects;
 };

@@ -17,15 +17,11 @@ void CPU::Tick() {
 }
 
 void CPU::DecrementTimers() {
-    if (_delayTimer > 0) {
-        _delayTimer -= 1;
-    }
+    _delayTimer -= 1 & (_delayTimer > 0);
     if (_soundTimer > 0) {
         _soundTimer -= 1;
         if (_soundTimer == 0) {
             _screen->StopBeep();
-        } else {
-            _screen->ContinueBeep();
         }
     }
 }

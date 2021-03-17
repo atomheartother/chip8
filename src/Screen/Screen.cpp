@@ -38,10 +38,6 @@ void Screen::Beep() {
     std::cout << '\a';
 }
 
-void Screen::ContinueBeep() {
-    Beep();
-}
-
 void Screen::Draw(){
     if (_shouldDraw == false) { return; }
     _shouldDraw = false;

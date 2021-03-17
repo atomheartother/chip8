@@ -20,7 +20,6 @@ class Screen {
         // Draw updated screen state
         virtual void Draw();
         virtual void Beep();
-        virtual void ContinueBeep();
         virtual void StopBeep() {};
     protected:
         // This function is called at each pixel update

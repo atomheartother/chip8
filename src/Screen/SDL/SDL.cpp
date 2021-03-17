@@ -1,21 +1,75 @@
 #include "SDL.hh"
+#include "SDL_audio.h"
+#include "SDL_error.h"
+#include "SDL_timer.h"
 #include <SDL.h>
 #include <algorithm>
 #include <iostream>
+#include <cmath>
+
+#define PI2 6.28318530718
 
 const unsigned PIXEL_SIZE = 12;
 const unsigned PIXEL_GAP = 2;
+
+const double SmplRate = 48000;
+const float synthFreq = 880;
+
+void audioCallback(void* ptr, uint8_t* stream, int len) {
+    ScreenSDL* screen = static_cast<ScreenSDL*>(ptr);
+	short * snd = reinterpret_cast<short*>(stream);
+    std::cout << "Audio callback called: " << +len << std::endl;
+	len /= sizeof(*snd);
+	for(int i = 0; i < len; i++)
+	{
+		snd[i] = 32000 * sin(screen->time);
+		
+		screen->time += synthFreq * PI2 / SmplRate;
+		if(screen->time >= PI2)
+			screen->time -= PI2;
+	}
+}
 
 ScreenSDL::ScreenSDL() {
     uint16_t width = SCREEN_WIDTH * PIXEL_SIZE;
     uint16_t height = SCREEN_HEIGHT * PIXEL_SIZE;
 
-    SDL_Init( SDL_INIT_VIDEO | SDL_INIT_EVENTS );
+    SDL_Init( SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO );
     _window = SDL_CreateWindow("Ch++8", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+    if (!_window) {
+        std::cerr << "Error creating window: " << SDL_GetError() << std::endl;
+        return;
+    }
     _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+    if (!_renderer) { 
+        std::cerr << "Error creating renderer: " << SDL_GetError() << std::endl;
+        return; 
+    }
     _texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_TARGET, width, height);
-    _open = true;
+    if (!_texture) { 
+        std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
+        return; 
+    }
     Clear();
+    std::cout << "[SDL] Window initialized." << std::endl;
+    // Init audio
+    SDL_zero(_spec);
+    _spec.freq = SmplRate;
+    _spec.format = AUDIO_S16SYS;
+    _spec.channels = 1;
+    _spec.samples = 4096;
+    _spec.callback = audioCallback;
+    _spec.userdata = this;
+
+    int _audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &_spec, &_aspec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    if (_audioDeviceId <= 0) {
+        std::cerr << "[SDL] Error opening audio device: " << SDL_GetError() << std::endl;
+        return; 
+    }
+    std::cout << "[SDL] Initialized audio device with ID " << +_audioDeviceId << std::endl;
+    // Mark the window as opened, allowing the program to start
+    _open = true;
+    std::cout << "[SDL] Initialization successful." << std::endl;
 }
 
 ScreenSDL::~ScreenSDL() {
@@ -83,4 +137,12 @@ bool ScreenSDL::Poll() {
             break;
     }
     return res;
+}
+
+void    ScreenSDL::Beep() {
+    SDL_PauseAudioDevice(_audioDeviceId, 0);
+}
+
+void    ScreenSDL::StopBeep() {
+    SDL_PauseAudioDevice(_audioDeviceId, 1);
 }
