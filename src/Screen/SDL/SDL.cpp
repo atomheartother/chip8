@@ -12,18 +12,16 @@
 const unsigned PIXEL_SIZE = 12;
 const unsigned PIXEL_GAP = 2;
 
-const double SmplRate = 48000;
-const float synthFreq = 880;
+const double SmplRate = 44100;
+const float synthFreq = 440;
 
 void audioCallback(void* ptr, uint8_t* stream, int len) {
     ScreenSDL* screen = static_cast<ScreenSDL*>(ptr);
 	short * snd = reinterpret_cast<short*>(stream);
-    std::cout << "Audio callback called: " << +len << std::endl;
 	len /= sizeof(*snd);
 	for(int i = 0; i < len; i++)
 	{
-		snd[i] = 32000 * sin(screen->time);
-		
+		snd[i] = 5000 * sin(screen->time);
 		screen->time += synthFreq * PI2 / SmplRate;
 		if(screen->time >= PI2)
 			screen->time -= PI2;
@@ -57,11 +55,11 @@ ScreenSDL::ScreenSDL() {
     _spec.freq = SmplRate;
     _spec.format = AUDIO_S16SYS;
     _spec.channels = 1;
-    _spec.samples = 4096;
+    _spec.samples = 512;
     _spec.callback = audioCallback;
     _spec.userdata = this;
 
-    int _audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &_spec, &_aspec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    _audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &_spec, &_aspec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     if (_audioDeviceId <= 0) {
         std::cerr << "[SDL] Error opening audio device: " << SDL_GetError() << std::endl;
         return; 
