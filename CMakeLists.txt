@@ -29,7 +29,7 @@ target_sources(chip8
 )
 
 if (EMSCRIPTEN)
-  set(USE_FLAGS "-s WASM=1 -s USE_SDL=2 -s EXPORT_ALL=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/build/Brick.ch8@Brick.ch8 -s EXTRA_EXPORTED_RUNTIME_METHODS='['ccall', 'cwrap']'")
+  set(USE_FLAGS "-s WASM=1 -s USE_SDL=2 -s EXPORT_ALL=1 --preload-file ./rom -s EXTRA_EXPORTED_RUNTIME_METHODS='['ccall', 'cwrap']'")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
   set(CMAKE_EXECUTABLE_SUFFIX .js)
@@ -38,6 +38,7 @@ if (EMSCRIPTEN)
   PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/public
   )
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/rom DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 else()
   # Not compiling to WASM, set up desktop stuff
   include(cmake/CPM.cmake)
