@@ -98,12 +98,13 @@ void CPU::Op(uint16_t instruction) {
 
 
     const uint8_t operation = instruction & 0xF;
-    // Compute the destination register (x if operation anything else than 8)
+    // Compute the destination register (x if operation anything else than 7)
     // The res reg we use is always == to the opcode unless the opcode is 0xe, in which case it's 8 (0xe-6)
-    _Vx[x - ((x-y) & ((operation != 7) - 1)) ] = res[operation - (6 & (operation == 0xe))];
+    uint8_t mask = (operation == 7) - 1;
+    _Vx[(x & mask) + (y & ~mask) ] = res[operation - (6 & (operation == 0xe))];
     // The carry flag is equal to itself (carryFlag[0], or carryFlag[operation-operation]) if operation < 4
     // Otherwise we grab the result from carryFlag[operation-0] ;D
-    _Vx[0xF] = carryFlag[operation - (operation & ((operation >= 4) - 1) )];
+    _Vx[0xF] = carryFlag[operation & ((operation < 4) - 1)];
     // And that's how you make unlegible VERY fast code!
 }
 
