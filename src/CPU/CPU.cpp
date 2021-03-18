@@ -1,4 +1,5 @@
 #include "CPU.hh"
+#include <bits/stdint-uintn.h>
 #include <functional>
 #include <iostream>
 
@@ -75,41 +76,35 @@ void CPU::Op(uint16_t instruction) {
     const uint8_t x = getX(instruction);
     const uint8_t y = getY(instruction);
 
-    switch (instruction & 0xF) {
-        case 0:
-            _Vx[x] = _Vx[y];
-            break;
-        case 1:
-            _Vx[x] |= _Vx[y];
-            break;
-        case 2:
-            _Vx[x] &= _Vx[y];
-            break;
-        case 3:
-            _Vx[x] ^= _Vx[y];
-            break;
-        case 4: {
-            uint16_t res = _Vx[x] + _Vx[y];
-            _Vx[x] = res & 0xFF;
-            _Vx[0xF] = (res >> 8) ? 1 : 0;
-            break;
-        }
-        case 5:
-            _Vx[0xF] = (_Vx[x] > _Vx[y]);
-            _Vx[x] -= _Vx[y];
-            break;
-        case 6:
-            _Vx[0xF] = _Vx[x] & 1;
-            _Vx[x] >>= 1;
-            break;
-        case 7:
-            _Vx[0xF] = (_Vx[x] < _Vx[y]);
-            _Vx[y] -= _Vx[x];
-            break;
-        case 0xe:
-            _Vx[0xF] = _Vx[x] >> 7;
-            _Vx[x] <<= 1;
-    }
+    // Branchless - compute all possible operations
+    uint8_t res[9];
+    uint8_t carryFlag[9] = { _Vx[0xF] };
+
+    res[0] = _Vx[y];
+    res[1] = _Vx[x] | _Vx[y];
+    res[2] = _Vx[x] & _Vx[y];
+    res[3] = _Vx[x] ^ _Vx[y];
+    const uint16_t add = _Vx[x] + _Vx[y];
+    res[4] = add & 0xFF;
+    carryFlag[4] = add >> 8 > 0;
+    res[5] = _Vx[x] - _Vx[y];
+    carryFlag[5] = _Vx[x] > _Vx[y];
+    res[6] = _Vx[x] >> 1;
+    carryFlag[6] = _Vx[x] & 1;
+    res[7] = _Vx[y] - _Vx[x];
+    carryFlag[7] = _Vx[y] > _Vx[x];
+    res[8] = _Vx[x] << 1;
+    carryFlag[8] = _Vx[x] >> 7;
+
+
+    const uint8_t operation = instruction & 0xF;
+    // Compute the destination register (x if operation anything else than 8)
+    // The res reg we use is always == to the opcode unless the opcode is 0xe, in which case it's 8 (0xe-6)
+    _Vx[x - ((x-y) & ((operation != 7) - 1)) ] = res[operation - (6 & (operation == 0xe))];
+    // The carry flag is equal to itself (carryFlag[0], or carryFlag[operation-operation]) if operation < 4
+    // Otherwise we grab the result from carryFlag[operation-0] ;D
+    _Vx[0xF] = carryFlag[operation - (operation & ((operation >= 4) - 1) )];
+    // And that's how you make unlegible VERY fast code!
 }
 
 void CPU::SneReg(uint16_t instruction) {
