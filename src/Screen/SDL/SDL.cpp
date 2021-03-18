@@ -10,7 +10,7 @@
 #define PI2 6.28318530718
 
 const unsigned PIXEL_SIZE = 12;
-const unsigned PIXEL_GAP = 2;
+const unsigned PIXEL_GAP = 3;
 
 const double SmplRate = 44100;
 #ifndef EMSCRIPTEN
