@@ -47,21 +47,15 @@ void CPU::Call(uint16_t instruction) {
 }
 
 void CPU::SeByte(uint16_t instruction) {
-    if (_Vx[getX(instruction)] == getKK(instruction)) {
-        _pc += 2;
-    }
+    _pc += (_Vx[getX(instruction)] == getKK(instruction)) << 1;
 }
 
 void CPU::SneByte(uint16_t instruction) {
-    if (_Vx[getX(instruction)] != getKK(instruction)) {
-        _pc += 2;
-    }
+    _pc += (_Vx[getX(instruction)] != getKK(instruction)) << 1;
 }
 
 void CPU::SeReg(uint16_t instruction) {
-    if (_Vx[getX(instruction)] == _Vx[getY(instruction)]) {
-        _pc += 2;
-    }
+        _pc += (_Vx[getX(instruction)] == _Vx[getY(instruction)]) << 1;
 }
 
 void CPU::Ld(uint16_t instruction) {
@@ -109,9 +103,7 @@ void CPU::Op(uint16_t instruction) {
 }
 
 void CPU::SneReg(uint16_t instruction) {
-    if (_Vx[getX(instruction)] == _Vx[getY(instruction)]) {
-        _pc += 2;
-    }
+    _pc += (_Vx[getX(instruction)] == _Vx[getY(instruction)]) << 1;
 }
 
 void CPU::SetI(uint16_t instruction) {
@@ -133,18 +125,11 @@ void CPU::Drw(uint16_t instruction) {
 
 void CPU::Skips(uint16_t instruction) {
     const uint8_t x = getX(instruction);
-    switch (getKK(instruction)) {
-        case 0x9e:
-            if (_keys->isKeyPressed(_Vx[x])) {
-                _pc += 2;
-            }
-            break;
-        case 0xa1:
-            if (!_keys->isKeyPressed(_Vx[x])) {
-                _pc += 2;
-            }
-            break; 
-    }
+    const uint8_t kkk = getKK(instruction);
+    const bool pressed = _keys->isKeyPressed(_Vx[x]);
+    // If kkk === 0x9e we skip if the key is pressed
+    // If kkk === 0xa1 we check is the key is not pressed
+    _pc += (((kkk == 0x9e) & pressed) + ((kkk == 0xa1) & !pressed)) << 1;
 }
 
 void CPU::Fxx(uint16_t instruction) {
@@ -156,11 +141,9 @@ void CPU::Fxx(uint16_t instruction) {
             break;
         case 0x0a: {
             uint8_t k = _keys->firstKeyPressed();
-            if (k == NO_KEYS_PRESSED) {
-                _pc -= 2;
-            } else {
-                _Vx[x] = k;
-            }
+            uint8_t noKeys = k == NO_KEYS_PRESSED;
+            _pc -= noKeys << 1;
+            _Vx[x] = k & (noKeys - 1);
             break;
         }
         case 0x15:
