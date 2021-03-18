@@ -35,16 +35,19 @@ const double frameInterval = clockUnit / 60;
 void    mainloop(void* arg) {
     context *ctx = static_cast<context*>(arg);
     ctx->screen->Poll();
-    if (std::chrono::duration_cast<ClockResolution>(std::chrono::high_resolution_clock::now() - *ctx->lastTimerUpdate).count() > timerUpdateInterval) {
-        *ctx->lastTimerUpdate = std::chrono::high_resolution_clock::now();
+    const auto preTimers = std::chrono::high_resolution_clock::now();
+    if (std::chrono::duration_cast<ClockResolution>(preTimers - *ctx->lastTimerUpdate).count() > timerUpdateInterval) {
+        *ctx->lastTimerUpdate = preTimers;
         ctx->cpu->DecrementTimers();
     }
-    if (std::chrono::duration_cast<ClockResolution>(std::chrono::high_resolution_clock::now() - *ctx->lastExecution).count() > ctx->executionInterval) {
-        *ctx->lastExecution = std::chrono::high_resolution_clock::now();
+    const auto preCpu = std::chrono::high_resolution_clock::now();
+    if (std::chrono::duration_cast<ClockResolution>(preCpu - *ctx->lastExecution).count() > ctx->executionInterval) {
+        *ctx->lastExecution = preCpu;
         ctx->cpu->Tick();
     }
-    if (std::chrono::duration_cast<ClockResolution>(std::chrono::high_resolution_clock::now() - *ctx->lastFrame).count() > frameInterval) { 
-        *ctx->lastFrame = std::chrono::high_resolution_clock::now();
+    const auto preDraw = std::chrono::high_resolution_clock::now();
+    if (std::chrono::duration_cast<ClockResolution>(preDraw - *ctx->lastFrame).count() > frameInterval) { 
+        *ctx->lastFrame = preDraw;
         ctx->screen->Draw();
     }
 }
@@ -70,7 +73,7 @@ int loadRom(const char* filename, double execInterval) {
     std::cout << "[EMU] CPU interval is " << +execInterval << unitString << std::endl;
     std::cout << "[EMU] Frame interval is " << +frameInterval << unitString << std::endl;
     std::cout << "[EMU] 60Hz clock interval is " << +timerUpdateInterval << unitString << std::endl;
-        std::cout << "[EMU] Starting execution loop." << std::endl;
+    std::cout << "[EMU] Starting execution loop." << std::endl;
 #ifdef EMSCRIPTEN
         emscripten_set_main_loop_arg(mainloop, &ctx, 10000, 0);
         // We can't return or everything crashes!
