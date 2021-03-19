@@ -26,11 +26,11 @@ struct context
 
 // Set the clock resolution
 typedef std::chrono::nanoseconds ClockResolution;
-const double clockUnit = ClockResolution::period::den;
+const double oneSecond = ClockResolution::period::den;
 const std::string unitString  = "ns";
 
-const double timerUpdateInterval = clockUnit / 60;
-const double frameInterval = clockUnit / 60;
+const double timerUpdateInterval = oneSecond / 60;
+const double frameInterval = oneSecond / 60;
 
 void    mainloop(void* arg) {
     context *ctx = static_cast<context*>(arg);
@@ -98,7 +98,7 @@ extern "C" {
 # endif
 
 EMSCRIPTEN_KEEPALIVE void    emLoadRom(char *filename) {
-    loadRom(filename, clockUnit / 500);
+    loadRom(filename, oneSecond / 500);
     free(filename);
 }
 
@@ -116,7 +116,7 @@ double getExecInterval(int ac, const char** av) {
             std::cerr << "Can't convert " << av[2] << " to a number, using default value of " << instructionsPerSecond << std::endl;
         }
     }
-    return clockUnit / instructionsPerSecond;
+    return oneSecond / instructionsPerSecond;
 }
 
 int main(int ac, const char **av) {
