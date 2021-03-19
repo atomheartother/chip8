@@ -7,10 +7,16 @@
   </head>
   <body style="padding: 15px">
     <h1>Chip-8 Emulator</h1>
-    <form onsubmit="return onSubmit()">
-      <input type="text" id="fileNameInput" placeholder="filename.chip8" />
-    </form>
-    <button onclick="return cancelEmulation()">Stop emulation</button>
+    <div>
+      <form onsubmit="return onSubmit()">
+        <select name="ROMs" id="fileNameInput">
+          <option value="Brick">Brick</option>
+          <option value="Pong">PONG</option>
+        </select>
+        <button type="submit">Start emulation</button>
+      </form>
+      <button onclick="return cancelEmulation()">Stop emulation</button>
+  </div>
     <!-- Create the canvas that the C++ code will draw into -->
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     <!-- Allow the C++ to access the canvas element --> 
@@ -39,7 +45,7 @@
         }
         const { value } = document.getElementById('fileNameInput');
         try {
-          loadRom(value);
+          loadRom(`./rom/${value}.ch8`);
         } catch (e) {
           hasRomLoaded = true;
           console.log("Program launched successfully");
