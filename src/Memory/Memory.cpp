@@ -35,10 +35,12 @@ const uint8_t hexSprites[HEX_SPRITES_SIZE] = {
 Memory::Memory() {
     _ram = new uint8_t[RAM_SIZE];
     RAMWrite(hexSprites, 0, HEX_SPRITES_SIZE);
+    std::cout << "[RAM] Initialized " <<  RAM_SIZE << "B of memory." << std::endl;
 }
 
 Memory::~Memory() {
     delete[] _ram;
+    std::cout << "[RAM] Unloaded memory." << std::endl;
 }
 
 int Memory::Load(const char* filename) {
@@ -51,15 +53,15 @@ int Memory::Load(const char* filename) {
     in.seekg(0, in.end);
     const int length = in.tellg();
     in.seekg(0, in.beg);
-    std::cout << "[RAM] Loading program " << filename << " (" << length << "B)" << std::endl;
+    std::cout << "[RAM] Loading program " << filename << " (" << length << "B)." << std::endl;
     if (length > RAM_SIZE) {
-        std::cerr << "Program " << filename << " is too large for RAM: " << length << "B" << std::endl;
+        std::cerr << "[RAM] Program " << filename << " is too large: " << length << "B" << std::endl;
         return 3;
     }
 
     in.read(reinterpret_cast<char*>(_ram + HEX_SPRITES_SIZE), length);
     if (!in) {
-        std::cerr << "Couldn't load program, only read " << in.gcount() << "B" << std::endl;
+        std::cerr << "[RAM] Couldn't load program, only read " << in.gcount() << "B" << std::endl;
         return 4;
     }
     return 0;

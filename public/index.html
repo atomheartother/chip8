@@ -10,6 +10,7 @@
     <form onsubmit="return onSubmit()">
       <input type="text" id="fileNameInput" placeholder="filename.chip8" />
     </form>
+    <button onclick="return cancelEmulation()">Stop emulation</button>
     <!-- Create the canvas that the C++ code will draw into -->
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     <!-- Allow the C++ to access the canvas element --> 
@@ -20,12 +21,27 @@
     </script>
     <script src="./chip8.js"></script>
     <script type="text/javascript">
+      let hasRomLoaded = false;
       const loadRom = Module.cwrap('emLoadRom', null, ['string']);
+      const stopEmulation = Module.cwrap('emStop', null, []);
+      function cancelEmulation() {
+        try {
+          stopEmulation();
+        } catch (e) {
+          // Success!
+          hasRomLoaded = false;
+        }
+        return false;
+      }
       function onSubmit() {
+        if (hasRomLoaded) {
+          cancelEmulation();
+        }
         const { value } = document.getElementById('fileNameInput');
         try {
           loadRom(value);
         } catch (e) {
+          hasRomLoaded = true;
           console.log("Program launched successfully");
         }
         return false;

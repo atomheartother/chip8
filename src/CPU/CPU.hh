@@ -13,6 +13,8 @@
 class CPU {
 public:
     CPU(Memory* mem, const Keys* keys, Screen* screen);
+    ~CPU();
+
     typedef void (CPU::*InstructionSetPtr)(uint16_t instruction);
     typedef void InstructionSet(uint16_t instruction);
     void    DecrementTimers();

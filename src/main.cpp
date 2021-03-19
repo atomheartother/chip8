@@ -16,13 +16,16 @@ typedef std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
 
 struct context
 {
-    Screen* screen;
+    Screen* screen = nullptr;
     CPU*    cpu;
     timestamp*  lastTimerUpdate;
     timestamp*  lastExecution;
     timestamp*  lastFrame;
     double    executionInterval;
 };
+
+// We need a global context object in EMSCripten, we might as well use it everywhere
+context ctx;
 
 // Set the clock resolution
 typedef std::chrono::nanoseconds ClockResolution;
@@ -63,7 +66,6 @@ int loadRom(const char* filename, double execInterval) {
     auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
     auto lastExecution = std::chrono::high_resolution_clock::now();
     auto lastFrame = std::chrono::high_resolution_clock::now();
-    context ctx;
     ctx.screen = screen;
     ctx.cpu = cpu;
     ctx.lastTimerUpdate = &lastTimerUpdate;
@@ -82,10 +84,8 @@ int loadRom(const char* filename, double execInterval) {
     while (screen->isOpen()) {
         mainloop(&ctx);
     }
+    // The CPU deletes the memory, screen & keys
     delete cpu;
-    delete screen;
-    delete keys;
-    delete memory;
     std::cout << "[EMU] Exiting cleanly." << std::endl;
     return 0;
 #endif
@@ -97,9 +97,21 @@ int loadRom(const char* filename, double execInterval) {
 extern "C" {
 # endif
 
-EMSCRIPTEN_KEEPALIVE void    emLoadRom(char *filename) {
+EMSCRIPTEN_KEEPALIVE
+void    emLoadRom(char *filename) {
     loadRom(filename, oneSecond / 500);
     free(filename);
+    exit(0);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void    emStop() {
+    if (ctx.screen) {
+        emscripten_cancel_main_loop();
+        delete ctx.cpu;
+        delete ctx.cpu;
+        delete ctx.screen;
+    }
 }
 
 # ifdef __cplusplus

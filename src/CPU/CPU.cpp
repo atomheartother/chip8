@@ -2,7 +2,16 @@
 #include <functional>
 #include <iostream>
 
-CPU::CPU(Memory *mem, const Keys *keys, Screen* screen) : _memory(mem), _keys(keys), _screen(screen) {}
+CPU::CPU(Memory *mem, const Keys *keys, Screen* screen) : _memory(mem), _keys(keys), _screen(screen) {
+        std::cout << "[CPU] CPU initialized." << std::endl;
+}
+
+CPU::~CPU() {
+    delete _memory;
+    delete _keys;
+    delete _screen;
+    std::cout << "[CPU] Terminating CPU." << std::endl;
+}
 
 void CPU::ExecuteInstruction(uint16_t instruction) {
     const uint8_t instructionCode = instruction >> 12;
