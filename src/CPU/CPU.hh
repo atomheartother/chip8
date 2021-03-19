@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <sys/types.h>
 #include "../Memory/Memory.hh"
 #include "../Keys/Keys.hh"
 #include "../Screen/Screen.hh"
