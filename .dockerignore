@@ -1,0 +1,7 @@
+res/
+lib/
+build/
+bin/
+.cache/
+.vscode/
+.git
