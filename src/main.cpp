@@ -100,18 +100,13 @@ extern "C" {
 EMSCRIPTEN_KEEPALIVE
 void    emLoadRom(char *filename) {
     loadRom(filename, oneSecond / 500);
-    free(filename);
-    exit(0);
 }
 
 EMSCRIPTEN_KEEPALIVE
 void    emStop() {
-    if (ctx.screen) {
-        emscripten_cancel_main_loop();
-        delete ctx.cpu;
-        delete ctx.cpu;
-        delete ctx.screen;
-    }
+    emscripten_cancel_main_loop();
+    delete ctx.cpu;
+    std::exit(0);
 }
 
 # ifdef __cplusplus

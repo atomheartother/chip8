@@ -37,8 +37,12 @@
         try {
           stopEmulation();
         } catch (e) {
-          // Success!
-          hasRomLoaded = false;
+          if (e.name == "ExitStatus") {
+            // Success!
+            hasRomLoaded = false;
+          } else {
+            console.error("Error while cancelling the emulator:", e);
+          }
         }
         return false;
       }
@@ -50,8 +54,11 @@
         try {
           loadRom(`./rom/${value}.ch8`);
         } catch (e) {
-          hasRomLoaded = true;
-          console.log("Program launched successfully");
+          if (e.name == "ExitStatus") {
+            hasRomLoaded = true;
+          } else {
+            console.error("Error launching the emulator:", e);
+          }
         }
         return false;
       }
