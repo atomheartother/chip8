@@ -26,6 +26,5 @@ class Screen {
         // it is called from within DrawSprite
         virtual void UpdatePixel(uint8_t, uint8_t, bool) {};
 
-        bool    _shouldDraw = true;
         std::bitset<SCREEN_WIDTH * SCREEN_HEIGHT> _pixels;
 };

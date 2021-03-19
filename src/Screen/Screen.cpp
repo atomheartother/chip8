@@ -6,7 +6,6 @@ Screen::Screen() {}
 
 void Screen::Clear() {
     _pixels.reset();
-    _shouldDraw = true;
 }
 
 bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spriteSize) {
@@ -30,7 +29,6 @@ bool Screen::DrawSprite(uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t spr
             }
         }
     }
-    _shouldDraw = true;
     return pixelRemoved;
 }
 
@@ -39,8 +37,6 @@ void Screen::Beep() {
 }
 
 void Screen::Draw(){
-    if (_shouldDraw == false) { return; }
-    _shouldDraw = false;
     auto px = _pixels.to_string(' ', 'X');
     std::string out;
     out.reserve(px.size() + px.size() / SCREEN_WIDTH);
