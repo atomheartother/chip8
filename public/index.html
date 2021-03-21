@@ -3,25 +3,90 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="https://chip8.navennec.net/" />
+    <meta name="twitter:title" content="C++ip-8" />
+    <meta
+      name="twitter:description"
+      content="A simple cross-platform Chip-8 emulator :)"
+    />
+    <meta
+      name="twitter:image"
+      content="https://raw.githubusercontent.com/atomheartother/chip8/master/res/screenshot.png"
+    />
+
     <title>Ch++ip-8</title>
+    <style>
+      body {
+        font-family:Open Sans,Arial;
+        color:#454545;
+        font-size:16px;
+        margin:2em auto;
+        max-width:800px;
+        padding:1em;
+        line-height:1.4;
+        text-align:justify
+      }
+      .socialContainer {
+        height: 2em;
+        float: right;
+      }
+      .socialContainer a {
+        margin-right: 0.5em;
+      }
+      .socialContainer a img {
+        height: 100%;
+        width: auto;
+      }
+    </style>
   </head>
-  <body style="padding: 15px">
-    <h1>Chip-8 Emulator</h1>
+  <body>
+    <h1>C++ip-8 Interpreter</h1>
     <div>
       <form onsubmit="return onSubmit()">
         <select name="ROMs" id="fileNameInput">
           <option value="Brick">Brick</option>
           <option value="Fish">&lt;&gt;&lt;</option>
           <option value="IBM">IBM Logo</option>
+          <option value="Lunar">Lunar Lander</option>
           <option value="Pong">PONG</option>
           <option value="SI">Space Invaders</option>
+          <option value="Tetris">Tetris</option>
         </select>
         <button type="submit">Start emulation</button>
       </form>
       <button onclick="return cancelEmulation()">Stop emulation</button>
-  </div>
+    </div>
     <!-- Create the canvas that the C++ code will draw into -->
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <h1>Controls</h1>
+    <p>The chip-8 has room for 16 keys, set in a square. This emulator maps them to a square drawn between 1 and V on a QWERTY keyboard. So:</p>
+    <p style="font-family: monospace;">
+      1 2 3 4<br>
+      Q W E R<br>
+      A S D F<br>
+      Z X C V
+    </p>
+    <p>Most games use Q and E for left and right. Pong uses <i>1-Q</i> for Player 1, and <i>4-R</i> for Player 2.</p>
+    <p><i>P.S: I haven't figured out how to get controls working on mobile yet, maybe later.</i></p>
+
+    <h1>This emulator</h1>
+    <p>C++ip-8 is my first attempt at a WASM project. This source code is in C++, and runs on Windows, Linux and, as you can see, in a browser.</p>
+    <p>If you'd like to peruse the source code or report a bug, you can drop by the Github linked below<a href="https://www.youtube.com/watch?v=IXai3D4FqXY">.</a></p>
+    <h1>Credits</h1>
+    I use SDL2 for graphics, EMSCripten for WASM compilation, the chip-8 roms I use and their authors are all listed [here](https://github.com/dmatlack/chip8/tree/master/roms).
+    <footer class="socialContainer">
+      <a href="https://github.com/atomheartother/chip8">
+        <img src="https://wanwan-html5.moe/style/svg/github.svg" />
+      </a>
+      <a href="https://www.patreon.com/atomheartother">
+        <img src="https://wanwan-html5.moe/style/svg/patreon.svg" />
+      </a>
+      <a href="https://twitter.com/srslizness">
+        <img src="https://wanwan-html5.moe/style/svg/twitter.svg" />
+      </a>
+    </footer>
     <!-- Allow the C++ to access the canvas element --> 
     <script type='text/javascript'>
       var Module = {
