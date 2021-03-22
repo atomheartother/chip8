@@ -15,9 +15,11 @@ const unsigned PIXEL_GAP = 3;
 const double SmplRate = 44100;
 #ifndef EMSCRIPTEN
 const float synthFreq = 440;
+const unsigned intensity = 5000;
 #else
-// Web for some reason plays it at double pitch??
-const float synthFreq = 220;
+// Web for some reason plays it at double pitch and louder
+const float synthFreq = 100;
+const unsigned intensity = 150;
 #endif
 void audioCallback(void* ptr, uint8_t* stream, int len) {
     ScreenSDL* screen = static_cast<ScreenSDL*>(ptr);
@@ -25,7 +27,7 @@ void audioCallback(void* ptr, uint8_t* stream, int len) {
 	len /= sizeof(*snd);
 	for(int i = 0; i < len; i++)
 	{
-		snd[i] = 5000 * sin(screen->time);
+		snd[i] = intensity * sin(screen->time);
 		screen->time += synthFreq * PI2 / SmplRate;
 		if(screen->time >= PI2)
 			screen->time -= PI2;
