@@ -47,6 +47,7 @@
     <h1>C++ip-8 Interpreter</h1>
     <div>
       <form onsubmit="return onSubmit()">
+        <div>
         <select name="ROMs" id="fileNameInput">
           <option value="Brick">Brick</option>
           <option value="Fish">&lt;&gt;&lt;</option>
@@ -58,6 +59,9 @@
         </select>
         <button type="submit">Start emulation</button>
       </form>
+      <label for="instructionsPerSecond">Instructions per second:</label>
+      <input type="number" id="instructionsPerSecond" value="350" min="1" />
+      </div>
       <button onclick="return cancelEmulation()">Stop emulation</button>
     </div>
     <!-- Create the canvas that the C++ code will draw into -->
@@ -92,7 +96,7 @@
     <script src="./chip8.js"></script>
     <script type="text/javascript">
       let hasRomLoaded = false;
-      const loadRom = Module.cwrap('emLoadRom', null, ['string']);
+      const loadRom = Module.cwrap('emLoadRom', null, ['string', 'number']);
       const stopEmulation = Module.cwrap('emStop', null, []);
       function cancelEmulation() {
         try {
@@ -111,9 +115,10 @@
         if (hasRomLoaded) {
           cancelEmulation();
         }
-        const { value } = document.getElementById('fileNameInput');
+        const { value: filename } = document.getElementById('fileNameInput');
+        const { value: instructionsPerSecond} = document.getElementById('instructionsPerSecond');
         try {
-          loadRom(`./rom/${value}.ch8`);
+          loadRom(`./rom/${filename}.ch8`, instructionsPerSecond);
         } catch (e) {
           if (e.name == "ExitStatus") {
             hasRomLoaded = true;

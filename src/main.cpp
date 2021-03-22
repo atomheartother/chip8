@@ -89,8 +89,8 @@ extern "C" {
 # endif
 
 EMSCRIPTEN_KEEPALIVE
-void    emLoadRom(char *filename) {
-    loadRom(filename, oneSecond / 500);
+void    emLoadRom(char *filename, unsigned instructionsPerSecond) {
+    loadRom(filename, oneSecond / instructionsPerSecond);
 }
 
 EMSCRIPTEN_KEEPALIVE
