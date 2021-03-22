@@ -40,14 +40,12 @@ void    drawframe(void* arg) {
     ctx->cpu->DecrementTimers();
     timestamp now;
     timestamp startOfFrame = std::chrono::high_resolution_clock::now();
-    unsigned cycleCount = 0;
     do {
         ctx->screen->Poll();
         now = std::chrono::high_resolution_clock::now();
         if (std::chrono::duration_cast<ClockResolution>(now - *ctx->lastExecution).count() > ctx->executionInterval) {
             *ctx->lastExecution = now;
             ctx->cpu->Tick();
-            cycleCount += 1;
         }
     } while(std::chrono::duration_cast<ClockResolution>(now - startOfFrame).count() < frameInterval);
     ctx->screen->Draw();
