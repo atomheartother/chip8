@@ -18,9 +18,7 @@ struct context
 {
     Screen* screen = nullptr;
     CPU*    cpu;
-    timestamp*  lastTimerUpdate;
     timestamp*  lastExecution;
-    timestamp*  lastFrame;
     double    executionInterval;
 };
 
@@ -32,27 +30,27 @@ typedef std::chrono::nanoseconds ClockResolution;
 const double oneSecond = ClockResolution::period::den;
 const std::string unitString  = "ns";
 
-const double timerUpdateInterval = oneSecond / 60;
+// Run at 60fps, also the rate of the timers!
 const double frameInterval = oneSecond / 60;
 
-void    mainloop(void* arg) {
+void    drawframe(void* arg) {
+    // This function is called once per frame.
+    // It should do all the frame-drawy things
     context *ctx = static_cast<context*>(arg);
-    ctx->screen->Poll();
-    const auto preTimers = std::chrono::high_resolution_clock::now();
-    if (std::chrono::duration_cast<ClockResolution>(preTimers - *ctx->lastTimerUpdate).count() > timerUpdateInterval) {
-        *ctx->lastTimerUpdate = preTimers;
-        ctx->cpu->DecrementTimers();
-    }
-    const auto preCpu = std::chrono::high_resolution_clock::now();
-    if (std::chrono::duration_cast<ClockResolution>(preCpu - *ctx->lastExecution).count() > ctx->executionInterval) {
-        *ctx->lastExecution = preCpu;
-        ctx->cpu->Tick();
-    }
-    const auto preDraw = std::chrono::high_resolution_clock::now();
-    if (std::chrono::duration_cast<ClockResolution>(preDraw - *ctx->lastFrame).count() > frameInterval) { 
-        *ctx->lastFrame = preDraw;
-        ctx->screen->Draw();
-    }
+    ctx->cpu->DecrementTimers();
+    timestamp now;
+    timestamp startOfFrame = std::chrono::high_resolution_clock::now();
+    unsigned cycleCount = 0;
+    do {
+        ctx->screen->Poll();
+        now = std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration_cast<ClockResolution>(now - *ctx->lastExecution).count() > ctx->executionInterval) {
+            *ctx->lastExecution = now;
+            ctx->cpu->Tick();
+            cycleCount += 1;
+        }
+    } while(std::chrono::duration_cast<ClockResolution>(now - startOfFrame).count() < frameInterval);
+    ctx->screen->Draw();
 }
 
 int loadRom(const char* filename, double execInterval) {
@@ -63,26 +61,21 @@ int loadRom(const char* filename, double execInterval) {
     Screen* screen = new ScreenSDL();
 
     CPU* cpu = new CPU(memory, keys, screen);
-    auto lastTimerUpdate = std::chrono::high_resolution_clock::now();
     auto lastExecution = std::chrono::high_resolution_clock::now();
-    auto lastFrame = std::chrono::high_resolution_clock::now();
     ctx.screen = screen;
     ctx.cpu = cpu;
-    ctx.lastTimerUpdate = &lastTimerUpdate;
     ctx.lastExecution = &lastExecution;
     ctx.executionInterval = execInterval;
-    ctx.lastFrame = &lastFrame;
     std::cout << "[EMU] CPU interval is " << +execInterval << unitString << std::endl;
     std::cout << "[EMU] Frame interval is " << +frameInterval << unitString << std::endl;
-    std::cout << "[EMU] 60Hz clock interval is " << +timerUpdateInterval << unitString << std::endl;
     std::cout << "[EMU] Starting execution loop." << std::endl;
 #ifdef EMSCRIPTEN
-        emscripten_set_main_loop_arg(mainloop, &ctx, 10000, 0);
+        emscripten_set_main_loop_arg(drawframe, &ctx, 0, 0);
         // We can't return or everything crashes!
         std::exit(0);
 #else
     while (screen->isOpen()) {
-        mainloop(&ctx);
+        drawframe(&ctx);
     }
     // The CPU deletes the memory, screen & keys
     delete cpu;
