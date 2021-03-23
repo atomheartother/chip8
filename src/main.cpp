@@ -18,7 +18,6 @@ struct context
 {
     Screen* screen = nullptr;
     CPU*    cpu;
-    timestamp*  lastExecution;
     double    executionInterval;
 };
 
@@ -33,22 +32,15 @@ const std::string unitString  = "ns";
 // Run at 60fps, also the rate of the timers!
 const double frameInterval = oneSecond / 60;
 
-void    drawframe(void* arg) {
+void    drawframe() {
     // This function is called once per frame.
     // It should do all the frame-drawy things
-    context *ctx = static_cast<context*>(arg);
-    ctx->cpu->DecrementTimers();
-    timestamp now;
-    timestamp startOfFrame = std::chrono::high_resolution_clock::now();
-    do {
-        ctx->screen->Poll();
-        now = std::chrono::high_resolution_clock::now();
-        if (std::chrono::duration_cast<ClockResolution>(now - *ctx->lastExecution).count() > ctx->executionInterval) {
-            *ctx->lastExecution = now;
-            ctx->cpu->Tick();
-        }
-    } while(std::chrono::duration_cast<ClockResolution>(now - startOfFrame).count() < frameInterval);
-    ctx->screen->Draw();
+    ctx.cpu->DecrementTimers();
+    ctx.screen->Poll();
+    for (unsigned instructionCount = 0 ; instructionCount < frameInterval / ctx.executionInterval ; instructionCount += 1){
+        ctx.cpu->Tick();
+    }
+    ctx.screen->Draw();
 }
 
 int loadRom(const char* filename, double execInterval) {
@@ -59,21 +51,19 @@ int loadRom(const char* filename, double execInterval) {
     Screen* screen = new ScreenSDL();
 
     CPU* cpu = new CPU(memory, keys, screen);
-    auto lastExecution = std::chrono::high_resolution_clock::now();
     ctx.screen = screen;
     ctx.cpu = cpu;
-    ctx.lastExecution = &lastExecution;
     ctx.executionInterval = execInterval;
     std::cout << "[EMU] CPU interval is " << +execInterval << unitString << std::endl;
     std::cout << "[EMU] Frame interval is " << +frameInterval << unitString << std::endl;
     std::cout << "[EMU] Starting execution loop." << std::endl;
 #ifdef EMSCRIPTEN
-        emscripten_set_main_loop_arg(drawframe, &ctx, 0, 0);
+        emscripten_set_main_loop(drawframe, 0, 0);
         // We can't return or everything crashes!
         std::exit(0);
 #else
     while (screen->isOpen()) {
-        drawframe(&ctx);
+        drawframe();
     }
     // The CPU deletes the memory, screen & keys
     delete cpu;
