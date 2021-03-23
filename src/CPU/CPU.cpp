@@ -175,10 +175,10 @@ void CPU::Fxx(uint16_t instruction) {
             _memory->WriteB(_Vx[x] % 10, _i + 2);
             break;
         case 0x55:
-            _memory->Write(_Vx, _i, x);
+            _memory->Write(_Vx, _i, x + 1);
             break;
         case 0x65:
-            _memory->Read(_Vx, _i, x);
+            _memory->Read(_Vx, _i, x + 1);
             break;
         default:
             std::cout << "Unknown Fx sub-opcode: " << +getKK(instruction) << std::endl;
