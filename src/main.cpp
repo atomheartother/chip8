@@ -9,6 +9,8 @@
 #ifdef EMSCRIPTEN
 # include <emscripten.h>
 # include <cstdlib>
+#else
+# include <thread>
 #endif
 
 typedef std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
@@ -24,11 +26,12 @@ struct context
 context ctx;
 
 // Set the clock resolution
-const double oneSecond = std::chrono::nanoseconds::period::den;
+typedef std::chrono::nanoseconds ClockResolution;
+const double oneSecond = ClockResolution::period::den;
 const std::string unitString  = "ns";
 
 // Run at 60fps, also the rate of the timers!
-const double frameInterval = oneSecond / 60;
+const unsigned long frameInterval = oneSecond / 60;
 
 void    drawframe() {
     // This function is called once per frame.
@@ -61,7 +64,10 @@ int loadRom(const char* filename, double execInterval) {
         std::exit(0);
 #else
     while (screen->isOpen()) {
+        auto pre = std::chrono::high_resolution_clock::now();
         drawframe();
+        auto post = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(ClockResolution(frameInterval) - std::chrono::duration_cast<ClockResolution>((post-pre)));
     }
     // The CPU deletes the memory, screen & keys
     delete cpu;
