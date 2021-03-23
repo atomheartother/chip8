@@ -1,4 +1,5 @@
 #include "CPU.hh"
+#include <bits/stdint-uintn.h>
 #include <functional>
 #include <iostream>
 
@@ -98,7 +99,6 @@ void CPU::Op(uint16_t instruction) {
     res[8] = _Vx[x] << 1;
     carryFlag[8] = _Vx[x] >> 7;
 
-
     const uint8_t operation = instruction & 0xF;
     // Compute the destination register (x if operation anything else than 7)
     // The res reg we use is always == to the opcode unless the opcode is 0xe, in which case it's 8 (0xe-6)
@@ -111,7 +111,7 @@ void CPU::Op(uint16_t instruction) {
 }
 
 void CPU::SneReg(uint16_t instruction) {
-    _pc += (_Vx[getX(instruction)] == _Vx[getY(instruction)]) << 1;
+    _pc += (_Vx[getX(instruction)] != _Vx[getY(instruction)]) << 1;
 }
 
 void CPU::SetI(uint16_t instruction) {
@@ -180,5 +180,7 @@ void CPU::Fxx(uint16_t instruction) {
         case 0x65:
             _memory->Read(_Vx, _i, x);
             break;
+        default:
+            std::cout << "Unknown Fx sub-opcode: " << +getKK(instruction) << std::endl;
     }
 }
