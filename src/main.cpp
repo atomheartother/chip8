@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include "CPU/CPU.hh"
@@ -25,8 +24,7 @@ struct context
 context ctx;
 
 // Set the clock resolution
-typedef std::chrono::nanoseconds ClockResolution;
-const double oneSecond = ClockResolution::period::den;
+const double oneSecond = std::chrono::nanoseconds::period::den;
 const std::string unitString  = "ns";
 
 // Run at 60fps, also the rate of the timers!
