@@ -89,7 +89,7 @@ void CPU::Op(uint16_t instruction) {
     res[3] = _Vx[x] ^ _Vx[y];
     const uint16_t add = _Vx[x] + _Vx[y];
     res[4] = add & 0xFF;
-    carryFlag[4] = add >> 8 > 0;
+    carryFlag[4] = (add & 0xFF00) > 0;
     res[5] = _Vx[x] - _Vx[y];
     carryFlag[5] = _Vx[x] > _Vx[y];
     res[6] = _Vx[x] >> 1;
