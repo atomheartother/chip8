@@ -22,10 +22,14 @@ void audioCallback(void* ptr, uint8_t* stream, int len) {
 	len /= sizeof(*snd);
 	for(int i = 0; i < len; i++)
 	{
-		snd[i] = intensity * sin(screen->time);
-		screen->time += synthFreq * PI2 / screen->_aspec.freq;
-		if(screen->time >= PI2)
-			screen->time -= PI2;
+        if (screen->silence) {
+            snd[i] = 0;
+        } else {
+            snd[i] = intensity * sin(screen->time);
+            screen->time += synthFreq * PI2 / screen->_aspec.freq;
+            if(screen->time >= PI2)
+                screen->time -= PI2;
+        }
 	}
 }
 
@@ -65,6 +69,7 @@ ScreenSDL::ScreenSDL() {
         std::cerr << "[SDL] Error opening audio device: " << SDL_GetError() << std::endl;
         return; 
     }
+    SDL_PauseAudioDevice(_audioDeviceId, 0);
     std::cout << "[AUDIO] Freq:" << _spec.freq << ", " << _aspec.freq << std::endl;
     std::cout << "[AUDIO] Samples:" << _spec.samples << ", " << _aspec.samples << std::endl;
     std::cout << "[AUDIO] Format:" << _spec.format << ", " << _aspec.format << std::endl;
@@ -142,9 +147,9 @@ bool ScreenSDL::Poll() {
 }
 
 void    ScreenSDL::Beep() {
-    SDL_PauseAudioDevice(_audioDeviceId, 0);
+    silence = false;
 }
 
 void    ScreenSDL::StopBeep() {
-    SDL_PauseAudioDevice(_audioDeviceId, 1);
+    silence = true;
 }

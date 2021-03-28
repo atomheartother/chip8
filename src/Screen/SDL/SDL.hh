@@ -22,6 +22,7 @@ public:
 
     float           time = 0;
     SDL_AudioSpec   _aspec;
+    bool            silence = 1;
 private:
     void    SetBackgroundColor();
     void    SetForegroundColor();
