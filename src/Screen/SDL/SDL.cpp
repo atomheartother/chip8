@@ -12,23 +12,18 @@
 const unsigned PIXEL_SIZE = 12;
 const unsigned PIXEL_GAP = 3;
 
-const double SmplRate = 44100;
-#ifndef EMSCRIPTEN
+const double DesiredSmplRate = 48000;
 const float synthFreq = 440;
-const unsigned intensity = 5000;
-#else
-// Web for some reason plays it at double pitch and louder
-const float synthFreq = 100;
-const unsigned intensity = 150;
-#endif
+const unsigned intensity = 4000;
+
 void audioCallback(void* ptr, uint8_t* stream, int len) {
     ScreenSDL* screen = static_cast<ScreenSDL*>(ptr);
-	short * snd = reinterpret_cast<short*>(stream);
+	float * snd = reinterpret_cast<float*>(stream);
 	len /= sizeof(*snd);
 	for(int i = 0; i < len; i++)
 	{
 		snd[i] = intensity * sin(screen->time);
-		screen->time += synthFreq * PI2 / SmplRate;
+		screen->time += synthFreq * PI2 / screen->_aspec.freq;
 		if(screen->time >= PI2)
 			screen->time -= PI2;
 	}
@@ -58,18 +53,21 @@ ScreenSDL::ScreenSDL() {
     std::cout << "[SDL] Window initialized." << std::endl;
     // Init audio
     SDL_zero(_spec);
-    _spec.freq = SmplRate;
-    _spec.format = AUDIO_S16SYS;
+    _spec.freq = DesiredSmplRate;
+    _spec.format = AUDIO_F32;
     _spec.channels = 1;
-    _spec.samples = 512;
+    _spec.samples = 256;
     _spec.callback = audioCallback;
     _spec.userdata = this;
 
-    _audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &_spec, &_aspec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    _audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &_spec, &_aspec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
     if (_audioDeviceId <= 0) {
         std::cerr << "[SDL] Error opening audio device: " << SDL_GetError() << std::endl;
         return; 
     }
+    std::cout << "[AUDIO] Freq:" << _spec.freq << ", " << _aspec.freq << std::endl;
+    std::cout << "[AUDIO] Samples:" << _spec.samples << ", " << _aspec.samples << std::endl;
+    std::cout << "[AUDIO] Format:" << _spec.format << ", " << _aspec.format << std::endl;
     std::cout << "[SDL] Initialized audio device with ID " << +_audioDeviceId << std::endl;
     // Mark the window as opened, allowing the program to start
     _open = true;

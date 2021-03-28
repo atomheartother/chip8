@@ -20,7 +20,8 @@ public:
     void Beep();
     void StopBeep();
 
-    float           time;
+    float           time = 0;
+    SDL_AudioSpec   _aspec;
 private:
     void    SetBackgroundColor();
     void    SetForegroundColor();
@@ -29,7 +30,6 @@ private:
     SDL_Renderer*   _renderer;
     SDL_Texture*    _texture;
     SDL_AudioSpec   _spec;
-    SDL_AudioSpec   _aspec;
     SDL_AudioDeviceID _audioDeviceId;
     bool            _open = false;
 };
