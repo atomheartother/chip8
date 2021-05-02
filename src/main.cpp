@@ -110,7 +110,7 @@ double getExecInterval(int ac, const char** av) {
     }
     return oneSecond / instructionsPerSecond;
 }
-
+#ifndef EMSCRIPTEN
 int main(int ac, const char **av) {
     if (ac < 2) {
         std::cerr << "Usage: " << av[0] << " <ROM path> [instructions per second]" << std::endl;
@@ -118,3 +118,4 @@ int main(int ac, const char **av) {
     }
     return loadRom(av[1], getExecInterval(ac, av));
 }
+#endif
