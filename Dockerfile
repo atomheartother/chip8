@@ -6,8 +6,9 @@ WORKDIR /usr/compile
 COPY . .
 
 # Download the ROMs
-RUN mkdir rom && \
-    cd rom && \
+RUN rm public/rom && \
+    mkdir public/rom && \
+    cd public/rom && \
     wget "https://github.com/dmatlack/chip8/raw/master/roms/programs/IBM%20Logo.ch8" -O IBM.ch8 && \
     wget "https://github.com/dmatlack/chip8/raw/master/roms/games/Lunar%20Lander%20(Udo%20Pernisz%2C%201979).ch8" -O Lunar.ch8 && \
     wget "https://github.com/dmatlack/chip8/raw/master/roms/games/Tetris%20%5BFran%20Dachille%2C%201991%5D.ch8" -O Tetris.ch8 && \
