@@ -46,7 +46,7 @@
   <body>
     <h1>C++ip-8 Interpreter</h1>
     <div>
-      <form onsubmit="return onSubmit()">
+      <form onsubmit="return false" action="#">
         <div>
         <select name="ROMs" id="fileNameInput">
           <option value="Brick">Brick</option>
@@ -57,7 +57,7 @@
           <option value="SI">Space Invaders</option>
           <option value="Tetris">Tetris</option>
         </select>
-        <button type="submit">Start emulation</button>
+        <button onclick="return onSubmit()">Start emulation</button>
       </form>
       <label for="instructionsPerSecond">Instructions per second:</label>
       <input type="number" id="instructionsPerSecond" value="350" min="1" />
@@ -111,14 +111,32 @@
         }
         return false;
       }
-      function onSubmit() {
+      async function onSubmit() {
         if (hasRomLoaded) {
           cancelEmulation();
         }
         const { value: filename } = document.getElementById('fileNameInput');
         const { value: instructionsPerSecond} = document.getElementById('instructionsPerSecond');
+
+        // Download a file
+        const blob = await fetch(`/rom/${filename}.ch8`).then(response => {
+          if (!response.ok) {
+            return null;
+          }     
+          return response.blob();
+        });
+        if (!blob) {
+          console.error(`Couldn't load file ${filename}, error fetching the file.`);
+          return;
+        }
+        // Convert blob to Uint8Array (more abstract: ArrayBufferView)
+        const data = new Uint8Array(await blob.arrayBuffer());
+
+        const stream = FS.open(filename, 'w+');
+        FS.write(stream, data, 0, data.length, 0);
+        FS.close(stream);
         try {
-          loadRom(`./rom/${filename}.ch8`, instructionsPerSecond);
+          loadRom(filename, instructionsPerSecond);
         } catch (e) {
           if (e.name == "ExitStatus") {
             hasRomLoaded = true;
