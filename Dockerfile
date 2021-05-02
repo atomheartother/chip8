@@ -21,4 +21,4 @@ RUN rm public/rom && \
 RUN mkdir build && cd build && emcmake cmake .. && make
 
 FROM nginx:alpine
-COPY --from=compiler /usr/compile/public/* /usr/share/nginx/html/
+COPY --from=compiler /usr/compile/public/ /usr/share/nginx/html/
