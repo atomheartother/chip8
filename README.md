@@ -10,7 +10,7 @@ Fully functional on Linux, Windows, Firefox, not tested on other platforms.
 ## Installation
 - `git clone git@github.com:atomheartother/chip8.git`
 - Install `cmake`
-- `mkdir build && cd build && cmake .. && cmake --build`
+- `mkdir build && cd build && cmake .. && cmake --build .`
 
 ## Running
 `./chip8 <rom file> [instructions per second]`
