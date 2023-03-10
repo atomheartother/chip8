@@ -46,7 +46,7 @@ else()
 
   CPMAddPackage(
     NAME SDL2         # The unique name of the dependency (should be the exported target's name)
-    GIT_TAG release-2.0.14      # The minimum version of the dependency (optional, defaults to 0)
+    GIT_TAG release-2.26.3      # The minimum version of the dependency (optional, defaults to 0)
     GIT_REPOSITORY git@github.com:libsdl-org/SDL.git
     OPTIONS
       "SDL_SHARED On"
