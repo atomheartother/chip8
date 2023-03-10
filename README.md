@@ -12,6 +12,11 @@ Fully functional on Linux, Windows, Firefox, not tested on other platforms.
 - Install `cmake`
 - `mkdir build && cd build && cmake .. && cmake --build .`
 
+### EMSCripten build
+Same as above but you'll want `emcmake` from the `emsdk`. Then:
+
+`emcmake cmake .. && cmake --build .`
+
 ## Running
 `./chip8 <rom file> [instructions per second]`
 
