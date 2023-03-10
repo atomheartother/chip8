@@ -3,3 +3,4 @@ build
 .vscode
 rom/*.ch8
 chip8
+.ccls-cache
