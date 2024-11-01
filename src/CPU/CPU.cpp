@@ -55,23 +55,23 @@ void CPU::Call(uint16_t instruction) {
 }
 
 void CPU::SeByte(uint16_t instruction) {
-    _pc += (_Vx[getX(instruction)] == getKK(instruction)) << 1;
+    _pc += (_V[getX(instruction)] == getKK(instruction)) << 1;
 }
 
 void CPU::SneByte(uint16_t instruction) {
-    _pc += (_Vx[getX(instruction)] != getKK(instruction)) << 1;
+    _pc += (_V[getX(instruction)] != getKK(instruction)) << 1;
 }
 
 void CPU::SeReg(uint16_t instruction) {
-        _pc += (_Vx[getX(instruction)] == _Vx[getY(instruction)]) << 1;
+        _pc += (_V[getX(instruction)] == _V[getY(instruction)]) << 1;
 }
 
 void CPU::Ld(uint16_t instruction) {
-    _Vx[getX(instruction)] = getKK(instruction);
+    _V[getX(instruction)] = getKK(instruction);
 }
 
 void CPU::Add(uint16_t instruction) {
-    _Vx[getX(instruction)] += getKK(instruction);
+    _V[getX(instruction)] += getKK(instruction);
 }
 
 void CPU::Op(uint16_t instruction) {
@@ -80,37 +80,46 @@ void CPU::Op(uint16_t instruction) {
 
     // Branchless - compute all possible operations
     uint8_t res[9];
-    uint8_t carryFlag[9] = { _Vx[0xF] };
+    uint8_t carryFlag[9] = { _V[0xF] };
 
-    res[0] = _Vx[y];
-    res[1] = _Vx[x] | _Vx[y];
-    res[2] = _Vx[x] & _Vx[y];
-    res[3] = _Vx[x] ^ _Vx[y];
-    const uint16_t add = _Vx[x] + _Vx[y];
+    const uint16_t add = _V[x] + _V[y];
+    // LD
+    res[0] = _V[y];
+    // OR
+    res[1] = _V[x] | _V[y];
+    // AND
+    res[2] = _V[x] & _V[y];
+    // XOR
+    res[3] = _V[x] ^ _V[y];
+    // ADD
     res[4] = add & 0xFF;
     carryFlag[4] = (add & 0xFF00) > 0;
-    res[5] = _Vx[x] - _Vx[y];
-    carryFlag[5] = _Vx[x] > _Vx[y];
-    res[6] = _Vx[x] >> 1;
-    carryFlag[6] = _Vx[x] & 1;
-    res[7] = _Vx[y] - _Vx[x];
-    carryFlag[7] = _Vx[y] > _Vx[x];
-    res[8] = _Vx[x] << 1;
-    carryFlag[8] = _Vx[x] >> 7;
+    // SUB
+    res[5] = _V[x] - _V[y];
+    carryFlag[5] = _V[x] > _V[y];
+    // SHR
+    res[6] = _V[x] >> 1;
+    carryFlag[6] = _V[x] & 1;
+    // SUBN
+    res[7] = _V[y] - _V[x];
+    carryFlag[7] = _V[y] > _V[x];
+    // SHL
+    res[8] = _V[x] << 1;
+    carryFlag[8] = _V[x] >> 7;
 
     const uint8_t operation = instruction & 0xF;
     // Compute the destination register (x if operation anything else than 7)
     // The res reg we use is always == to the opcode unless the opcode is 0xe, in which case it's 8 (0xe-6)
     const uint8_t srcIndex = operation - (6 & ((operation != 0xe) - 1));
-    _Vx[x] = res[srcIndex];
+    _V[x] = res[srcIndex];
     // The carry flag is equal to itself (carryFlag[0], or carryFlag[operation-operation]) if operation < 4
     // Otherwise we grab the result from carryFlag[operation-0] ;D
-    _Vx[0xF] = carryFlag[srcIndex & ((operation < 4) - 1)];
+    _V[0xF] = carryFlag[srcIndex & ((operation < 4) - 1)];
     // And that's how you make unlegible VERY fast code!
 }
 
 void CPU::SneReg(uint16_t instruction) {
-    _pc += (_Vx[getX(instruction)] != _Vx[getY(instruction)]) << 1;
+    _pc += (_V[getX(instruction)] != _V[getY(instruction)]) << 1;
 }
 
 void CPU::SetI(uint16_t instruction) {
@@ -118,22 +127,22 @@ void CPU::SetI(uint16_t instruction) {
 }
 
 void CPU::JpV0(uint16_t instruction) {
-    _pc = _Vx[0] + nnn(instruction);
+    _pc = _V[0] + nnn(instruction);
 }
 
 void CPU::Rnd(uint16_t instruction) {
-    _Vx[getX(instruction)] = std::rand() & getKK(instruction);
+    _V[getX(instruction)] = std::rand() & getKK(instruction);
 }
 
 void CPU::Drw(uint16_t instruction) {
     const uint8_t* sprite = _memory->Sprite(_i);
-    _Vx[0xF] = _screen->DrawSprite(_Vx[getX(instruction)], _Vx[getY(instruction)], sprite, instruction & 0xF);
+    _V[0xF] = _screen->DrawSprite(_V[getX(instruction)], _V[getY(instruction)], sprite, instruction & 0xF);
 }
 
 void CPU::Skips(uint16_t instruction) {
     const uint8_t x = getX(instruction);
     const uint8_t kkk = getKK(instruction);
-    const bool pressed = _keys->isKeyPressed(_Vx[x]);
+    const bool pressed = _keys->isKeyPressed(_V[x]);
     // If kkk === 0x9e we skip if the key is pressed
     // If kkk === 0xa1 we check is the key is not pressed
     _pc += (((kkk == 0x9e) & pressed) + ((kkk == 0xa1) & !pressed)) << 1;
@@ -144,40 +153,40 @@ void CPU::Fxx(uint16_t instruction) {
     const uint8_t x = getX(instruction);
     switch (getKK(instruction)) {
         case 0x07:
-            _Vx[x] = _delayTimer;
+            _V[x] = _delayTimer;
             break;
         case 0x0a: {
             uint8_t k = _keys->firstKeyPressed();
             uint8_t noKeys = k == NO_KEYS_PRESSED;
             _pc -= noKeys << 1;
-            _Vx[x] = k & (noKeys - 1);
+            _V[x] = k & (noKeys - 1);
             break;
         }
         case 0x15:
-            _delayTimer = _Vx[x];
+            _delayTimer = _V[x];
             break;
         case 0x18:
-            _soundTimer = _Vx[x];
+            _soundTimer = _V[x];
             if (_soundTimer > 0) {
                 _screen->Beep();
             }
             break;
         case 0x1e:
-            _i += _Vx[x];
+            _i += _V[x];
             break;
         case 0x29:
-            _i = _memory->HexSpriteAddress(_Vx[x]);
+            _i = _memory->HexSpriteAddress(_V[x]);
             break;
         case 0x33:
-            _memory->WriteB(_Vx[x] / 100, _i);
-            _memory->WriteB((_Vx[x] / 10) % 10, _i + 1);
-            _memory->WriteB(_Vx[x] % 10, _i + 2);
+            _memory->WriteB(_V[x] / 100, _i);
+            _memory->WriteB((_V[x] / 10) % 10, _i + 1);
+            _memory->WriteB(_V[x] % 10, _i + 2);
             break;
         case 0x55:
-            _memory->Write(_Vx, _i, x + 1);
+            _memory->Write(_V, _i, x + 1);
             break;
         case 0x65:
-            _memory->Read(_Vx, _i, x + 1);
+            _memory->Read(_V, _i, x + 1);
             break;
         default:
             std::cout << "Unknown Fx sub-opcode: " << +getKK(instruction) << std::endl;

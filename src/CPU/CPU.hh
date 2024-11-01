@@ -38,7 +38,7 @@ private:
     InstructionSet   Skips;
     InstructionSet   Fxx;
 
-    uint8_t   _Vx[16] = {0};
+    uint8_t   _V[16] = {0};
     uint16_t  _stack[16] = {0};
 
     InstructionSetPtr _instructions[16] = {
