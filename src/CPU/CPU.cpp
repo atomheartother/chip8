@@ -96,13 +96,13 @@ void CPU::Op(uint16_t instruction) {
     carryFlag[4] = (add & 0xFF00) > 0;
     // SUB
     res[5] = _V[x] - _V[y];
-    carryFlag[5] = _V[x] > _V[y];
+    carryFlag[5] = _V[x] >= _V[y];
     // SHR
     res[6] = _V[x] >> 1;
     carryFlag[6] = _V[x] & 1;
     // SUBN
     res[7] = _V[y] - _V[x];
-    carryFlag[7] = _V[y] > _V[x];
+    carryFlag[7] = _V[y] >= _V[x];
     // SHL
     res[8] = _V[x] << 1;
     carryFlag[8] = _V[x] >> 7;
